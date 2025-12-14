@@ -189,6 +189,17 @@ MonoBehaviour:
   nameText: {fileID: 0}
   characterType: 3
   faction: 0
+  infectionName: None
+  infectionMortalityRate: 0
+  incubationPeriod: 20
+  contagiousDuration: 30
+  symptoms: []
+  infectivity: 0.5
+  isContagious: 0
+  recoveryRate: 0
+  isImmune: 0
+  health: 100
+  infectionStage: 0
 --- !u!114 &-5658784640356242248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67147f95421f95478d3cf5ff9f55589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonBehaviorController
-  pythonScriptName: flock
+  pythonScriptName: flu_behavior
   decisionInterval: 0.5
 --- !u!114 &-385833208224287503
 MonoBehaviour:
@@ -218,6 +229,7 @@ MonoBehaviour:
   movementController: {fileID: 0}
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
+  actionController: {fileID: 0}
 --- !u!1 &7829199280468726661
 GameObject:
   m_ObjectHideFlags: 0

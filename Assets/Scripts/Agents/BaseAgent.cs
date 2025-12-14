@@ -15,23 +15,29 @@ public class BaseAgent : MonoBehaviour
     [Header("Character Classification")]
     [SerializeField] private CharacterType characterType;
     [SerializeField] private FactionType faction;
-    // Character status
-    [Header("Infection Status")]
+    // Disease status
+    [Header("Infection Parameters")]
     [SerializeField] private string infectionName = "None";
     [SerializeField][Range(0f, 1f)] private float infectionMortalityRate = 0f;
+    [SerializeField] private float incubationPeriod = 20f;
+    [SerializeField] private float contagiousDuration = 30f;
     [SerializeField] private List<string> symptoms = new List<string>();
+    [SerializeField][Range(0f, 1f)] private float infectivity = 0.5f;
     [SerializeField] private bool isContagious = false;
     [SerializeField][Range(0f, 1f)] private float recoveryRate = 0f;
+    [Header("Agent Infection Status")]
     [SerializeField] private bool isImmune = false;
     [SerializeField][Range(0f, 100f)] private float health = 100f;
     [SerializeField] private InfectionStage infectionStage = InfectionStage.Healthy;
-    [SerializeField][Range(0f, 1f)] private float infectivity = 0.5f;
 
     #endregion serializedVariables
 
     #region variables
     //Static registry for all agents
     private static Dictionary<string, BaseAgent> agentRegistry = new Dictionary<string, BaseAgent>();
+    // Action tracking - allows other agents to see what this agent is doing
+    private string currentAction = "none";
+    private float actionStartTime = -1f;
 
     //public properties for controlled access
     public string AgentName => agentName;
@@ -41,6 +47,8 @@ public class BaseAgent : MonoBehaviour
     //Enum of different possibles states for the agent
     public enum AgentState { Walking, Running, Idle, Sleeping, Dead }
     AgentState currentState = AgentState.Idle;
+    public string CurrentAction => currentAction;
+    public float ActionStartTime => actionStartTime;
 
 
     //Enum of different possibles
@@ -62,6 +70,9 @@ public class BaseAgent : MonoBehaviour
     public float Health => health;
     public InfectionStage CurrentInfectionStage => infectionStage;
     public float Infectivity => infectivity;
+    public float IncubationPeriod => incubationPeriod;
+    public float ContagiousDuration => contagiousDuration;
+
 
     public enum InfectionStage
     {
@@ -124,6 +135,126 @@ public class BaseAgent : MonoBehaviour
         }
         return matchingAgents.ToArray();
     }
+
+    /// <summary>
+    /// Modify health by a positive (heal) or negative (damage) amount.
+    /// Triggers death if health drops to 0 or below.
+    /// </summary>
+    public void ModifyHealth(float amount)
+    {
+        if (infectionStage == InfectionStage.Dead) return;
+
+        health += amount;
+
+        // Clamp health between 0 and 100
+        health = Mathf.Clamp(health, 0f, 100f);
+
+        if (health <= 0f)
+        {
+            Die();
+        }
+    }
+
+    /// <summary>
+    /// Convenience method for damage. Calls ModifyHealth with negative value.
+    /// </summary>
+    public void TakeDamage(float damage)
+    {
+        ModifyHealth(-damage);
+    }
+
+    #region Health & Infection Modification
+
+    /// <summary>
+    /// Infect this agent with a disease. Starts in Exposed stage.
+    /// Copies all disease parameters from the infecting agent.
+    /// </summary>
+    public void BecomeInfected(string name, float mortality, List<string> newSymptoms,
+                               float recovery, float newInfectivity,
+                               float incubation, float contagiousDur)
+    {
+        if (isImmune) return;
+        if (infectionStage != InfectionStage.Healthy) return;
+
+        // Copy disease parameters
+        infectionName = name;
+        infectionMortalityRate = mortality;
+        symptoms = new List<string>(newSymptoms);  // Create copy to avoid reference issues
+        recoveryRate = recovery;
+        infectivity = newInfectivity;
+        incubationPeriod = incubation;
+        contagiousDuration = contagiousDur;
+
+        // Start in Exposed stage (not yet contagious)
+        isContagious = false;
+        infectionStage = InfectionStage.Exposed;
+
+        Debug.Log($"{instanceID} has been exposed to {name}!");
+    }
+
+    /// <summary>
+    /// Progress from Exposed to Contagious stage.
+    /// Called by InfectionSystem when incubation period ends.
+    /// </summary>
+    public void BecomeContagious()
+    {
+        if (infectionStage != InfectionStage.Exposed) return;
+
+        infectionStage = InfectionStage.Contagious;
+        isContagious = true;
+
+        Debug.Log($"{instanceID} is now contagious with {infectionName}!");
+    }
+
+    /// <summary>
+    /// Recover from infection. Grants permanent immunity.
+    /// Called by InfectionSystem when contagious duration ends.
+    /// </summary>
+    public void Recover()
+    {
+        if (infectionStage != InfectionStage.Contagious) return;
+
+        infectionStage = InfectionStage.Recovered;
+        isContagious = false;
+        isImmune = true;
+
+        // Clear symptoms but keep infection name for history
+        symptoms.Clear();
+
+        Debug.Log($"{instanceID} has recovered from {infectionName} and is now immune!");
+    }
+
+    /// <summary>
+    /// Called when health reaches 0.
+    /// </summary>
+    public void Die()
+    {
+        if (infectionStage == InfectionStage.Dead) return;  // Prevent double death
+
+        health = 0f;
+        infectionStage = InfectionStage.Dead;
+        isContagious = false;
+        ChangeState(AgentState.Dead);
+
+        Debug.Log($"{instanceID} has died!");
+    }
+
+    #endregion Health & Infection Modification
+
+    #region Action Tracking
+
+    /// <summary>
+    /// Updates the current action being performed by this agent.
+    /// Called by all action methods so other agents can observe behavior.
+    /// </summary>
+    public void SetCurrentAction(string action)
+    {
+        currentAction = action;
+        actionStartTime = Time.time;
+    }
+
+    #endregion Action Tracking
+
     #endregion agentMethods
 
     #region State Management

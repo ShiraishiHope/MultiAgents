@@ -251,14 +251,14 @@ public class PythonBehaviorController : MonoBehaviour
         AgentActionManager.AgentPerceptionData data = actionManager.GetPerceptionData();
         PyDict perceptionDict = new PyDict();
 
-        // Basic identity and position information
+        // ----- IDENTITY -----
         perceptionDict["my_id"] = new PyString(data.myInstanceID);
         perceptionDict["my_x"] = new PyFloat(data.myPosition.x);
         perceptionDict["my_z"] = new PyFloat(data.myPosition.z);
         perceptionDict["my_type"] = new PyString(data.myType);
         perceptionDict["my_faction"] = new PyString(data.myFaction);
 
-        // ----- HEALTH/STATUS DATA -----
+        // ----- HEALTH/STATUS -----
         perceptionDict["health"] = new PyFloat(data.health);
         perceptionDict["infection_name"] = new PyString(data.infectionName);
         perceptionDict["infection_stage"] = new PyInt(data.infectionStage);
@@ -268,7 +268,11 @@ public class PythonBehaviorController : MonoBehaviour
         perceptionDict["is_contagious"] = new PyInt(data.isContagious ? 1 : 0);
         perceptionDict["is_immune"] = new PyInt(data.isImmune ? 1 : 0);
 
-        // Symptoms as a list
+        // Disease timing (new)
+        perceptionDict["incubation_period"] = new PyFloat(data.incubationPeriod);
+        perceptionDict["contagious_duration"] = new PyFloat(data.contagiousDuration);
+
+        // Symptoms as list
         using (PyList symptomsList = new PyList())
         {
             foreach (string symptom in data.symptoms)
@@ -278,15 +282,18 @@ public class PythonBehaviorController : MonoBehaviour
             perceptionDict["symptoms"] = symptomsList;
         }
 
-        // Agents this agent can currently see (within sight cone)
+        // ----- VISIBLE AGENTS (with full data) -----
         using (PyDict visibleDict = new PyDict())
         {
             foreach (var kvp in data.visibleAgents)
             {
                 using (PyDict agentData = new PyDict())
                 {
-                    agentData["x"] = new PyFloat(kvp.Value.x);
-                    agentData["z"] = new PyFloat(kvp.Value.z);
+                    agentData["x"] = new PyFloat(kvp.Value.position.x);
+                    agentData["z"] = new PyFloat(kvp.Value.position.z);
+                    agentData["distance"] = new PyFloat(kvp.Value.distance);
+                    agentData["current_action"] = new PyString(kvp.Value.currentAction);
+                    agentData["action_start_time"] = new PyFloat(kvp.Value.actionStartTime);
                     visibleDict[new PyString(kvp.Key)] = agentData;
                 }
             }
@@ -294,15 +301,16 @@ public class PythonBehaviorController : MonoBehaviour
         }
         perceptionDict["visible_count"] = new PyInt(data.visibleCount);
 
-        // Agents this agent can hear (within hearing radius)
+        // ----- HEARD AGENTS (with distance) -----
         using (PyDict heardDict = new PyDict())
         {
             foreach (var kvp in data.heardAgents)
             {
                 using (PyDict agentData = new PyDict())
                 {
-                    agentData["x"] = new PyFloat(kvp.Value.x);
-                    agentData["z"] = new PyFloat(kvp.Value.z);
+                    agentData["x"] = new PyFloat(kvp.Value.position.x);
+                    agentData["z"] = new PyFloat(kvp.Value.position.z);
+                    agentData["distance"] = new PyFloat(kvp.Value.distance);
                     heardDict[new PyString(kvp.Key)] = agentData;
                 }
             }
@@ -310,13 +318,13 @@ public class PythonBehaviorController : MonoBehaviour
         }
         perceptionDict["heard_count"] = new PyInt(data.heardCount);
 
-        // All agents in the simulation (global registry)
+        // ----- ALL AGENTS (positions only, unchanged) -----
         using (PyDict allAgentsDict = new PyDict())
         {
             Dictionary<string, Vector3> allAgents = BaseAgent.GetAllAgentsPosition();
             foreach (var kvp in allAgents)
             {
-                if (kvp.Key == data.myInstanceID) continue; // Skip self
+                if (kvp.Key == data.myInstanceID) continue;
 
                 using (PyDict agentData = new PyDict())
                 {
@@ -457,24 +465,86 @@ public class PythonBehaviorController : MonoBehaviour
         switch (action.actionType)
         {
             case "none":
-                // No action this cycle
                 break;
 
-            // ===== FUTURE ACTION TYPES =====
-            // Add cases here as you implement more agent capabilities
-            //
-            // case "attack":
-            //     actionManager.Attack(action.targetID);
-            //     break;
-            //
-            // case "communicate":
-            //     string message = action.parameters["message"] as string;
-            //     actionManager.SendMessage(action.targetID, message);
-            //     break;
+            // ----- COMBAT ACTIONS -----
+            case "attack":
+                actionManager.Attack(action.targetID);
+                break;
+
+            case "claw":
+                actionManager.Claw(action.targetID);
+                break;
+
+            case "bite":
+                actionManager.Bite(action.targetID);
+                break;
+
+            // ----- INFECTION SPREAD -----
+            case "sneeze":
+                actionManager.Sneeze();
+                break;
+
+            case "cough":
+                actionManager.Cough();
+                break;
+
+            // ----- HEALTH MODIFICATION -----
+            case "modify_health":
+                if (action.parameters.TryGetValue("amount", out object amountObj))
+                {
+                    float amount = Convert.ToSingle(amountObj);
+                    actionManager.ModifyHealth(amount);
+                }
+                else
+                {
+                    Debug.LogWarning($"modify_health action missing 'amount' parameter for {baseAgent.InstanceID}");
+                }
+                break;
+
+            // ----- SPECIAL MOVEMENT -----
+            case "quarantine":
+                actionManager.Quarantine();
+                break;
+
+            case "avoid":
+                ExecuteAvoidAction(action);
+                break;
 
             default:
-                Debug.LogWarning($"⚠ Unknown action type '{action.actionType}' for {baseAgent.InstanceID}");
+                Debug.LogWarning($"Unknown action type '{action.actionType}' for {baseAgent.InstanceID}");
                 break;
+        }
+    }
+
+    // Handles avoid action with either one or two targets.
+    private void ExecuteAvoidAction(ActionDecision action)
+    {
+        // Check for two targets first
+        bool hasTarget1 = action.parameters.TryGetValue("target_id_1", out object target1Obj);
+        bool hasTarget2 = action.parameters.TryGetValue("target_id_2", out object target2Obj);
+
+        if (hasTarget1 && hasTarget2)
+        {
+            // Two-target avoid
+            string targetID1 = target1Obj.ToString();
+            string targetID2 = target2Obj.ToString();
+            actionManager.Avoid(targetID1, targetID2);
+        }
+        else if (hasTarget1)
+        {
+            // Single-target avoid
+            string targetID1 = target1Obj.ToString();
+            actionManager.Avoid(targetID1);
+        }
+        else if (!string.IsNullOrEmpty(action.targetID))
+        {
+            // Fallback: use targetID field for single avoid
+            actionManager.Avoid(action.targetID);
+        }
+        else
+        {
+            Debug.LogWarning($"avoid action missing target parameters for {baseAgent.InstanceID}");
         }
     }
 

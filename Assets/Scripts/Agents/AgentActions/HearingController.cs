@@ -1,72 +1,92 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
-//Monobevahior is a base unity class that lets scripts attack to gameobjects and use unity methods like Start() and update()
 public class HearingController : MonoBehaviour
 {
     #region References
-    // References to other components this controller needs
     private BaseAgent baseAgent;
     #endregion
 
-    #region Movement Parameters
-
+    #region Hearing Parameters
     [SerializeField] private float hearingDistance = 6f;
-
-    // Current movement state
-    private Vector3 targetPosition;
     #endregion
 
-    #region Public Properties
+    #region Data Structures
+
+    /// <summary>
+    /// Data about a heard agent.
+    /// Includes position and distance.
+    /// </summary>
+    public struct HeardAgentData
+    {
+        public Vector3 position;
+        public float distance;
+    }
+
+    #endregion
+
+    #region Initialization
 
     void Start()
     {
         baseAgent = GetComponent<BaseAgent>();
-        GetAgentsWithinHearing();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void Initialize(BaseAgent agent)
     {
-        // Store references passed from the action manager
         baseAgent = agent;
-
-        // Set initial target to current position (not moving)
-        targetPosition = transform.position;
     }
+    #endregion
 
-    public Dictionary<string, Vector3> GetAgentsWithinHearing()
+    #region Hearing Methods
+
+    /// <summary>
+    /// Returns all agents within hearing range with position and distance.
+    /// </summary>
+    public Dictionary<string, HeardAgentData> GetHeardAgentsData()
     {
-        Dictionary<string, Vector3> heardAgents = new Dictionary<string, Vector3>();
-        Dictionary<string, Vector3> allAgents = BaseAgent.GetAllAgentsPosition();
+        Dictionary<string, HeardAgentData> heardAgents = new Dictionary<string, HeardAgentData>();
+        BaseAgent[] allAgents = BaseAgent.GetAllAgents();
 
-        foreach (KeyValuePair<string, Vector3> targetAgent in allAgents)
+        foreach (BaseAgent agent in allAgents)
         {
-            if (targetAgent.Key == baseAgent.InstanceID)
+            // Skip self
+            if (agent.InstanceID == baseAgent.InstanceID)
                 continue;
 
-            float dist = Vector3.Distance(targetAgent.Value, transform.position);
+            Vector3 targetPosition = agent.transform.position;
+            float distance = Vector3.Distance(transform.position, targetPosition);
 
-            if (dist <= hearingDistance)
+            // Check if within hearing range
+            if (distance <= hearingDistance)
             {
-                // range check - if the target is within range
-                heardAgents.Add(targetAgent.Key, targetAgent.Value);
-                //print(baseAgent.AgentName + " - " + baseAgent.InstanceID + " - heard targets: " + targetAgent.Key + "Pos" + targetAgent.Value);
+                HeardAgentData data = new HeardAgentData
+                {
+                    position = targetPosition,
+                    distance = distance
+                };
+
+                heardAgents.Add(agent.InstanceID, data);
             }
         }
+
         return heardAgents;
     }
 
-    #endregion
+    /// <summary>
+    /// Legacy method - returns just positions for backward compatibility.
+    /// </summary>
+    public Dictionary<string, Vector3> GetAgentsWithinHearing()
+    {
+        Dictionary<string, Vector3> heardAgents = new Dictionary<string, Vector3>();
+        var fullData = GetHeardAgentsData();
 
-    #region Hearing Commands
+        foreach (var kvp in fullData)
+        {
+            heardAgents.Add(kvp.Key, kvp.Value.position);
+        }
 
-
+        return heardAgents;
+    }
     #endregion
 }

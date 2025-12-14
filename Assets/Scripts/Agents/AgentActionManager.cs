@@ -1,47 +1,58 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Monobevahior is a base unity class that lets scripts attack to gameobjects and use unity methods like Start() and update()
 public class AgentActionManager : MonoBehaviour
 {
     #region Controller References
     [Header("Action Controllers")]
-    // Attribute. Allows variable to be visible in the inspector window to be able to drag and drop components.
-    // private variable only accessible within this class. Of Type MovementController.
     [SerializeField] private MovementController movementController;
     [SerializeField] private VisionController visionController;
     [SerializeField] private HearingController hearingController;
-
+    [SerializeField] private ActionController actionController;
 
     private BaseAgent baseAgent;
+    #endregion
 
-    //TO Develop
-    // [SerializeField] private CommunicationController communicationController;
-    // [SerializeField] private ResourceController resourceController;
-    // [SerializeField] private SensorController sensorController;
-    // [SerializeField] private SocialController socialController;
+    #region Data Structs
 
-    // Store reference to the base agent of this game object
-    #endregion Controller References
+    /// <summary>
+    /// Data about a visible agent - sent to Python.
+    /// </summary>
+    public struct VisibleAgentInfo
+    {
+        public Vector3 position;
+        public float distance;
+        public string currentAction;
+        public float actionStartTime;
+    }
 
-    #region Data Struct
+    /// <summary>
+    /// Data about a heard agent - sent to Python.
+    /// </summary>
+    public struct HeardAgentInfo
+    {
+        public Vector3 position;
+        public float distance;
+    }
 
+    /// <summary>
+    /// Complete perception data package sent to Python each decision cycle.
+    /// </summary>
     public struct AgentPerceptionData
     {
-        //Agent Data
+        // Agent Identity
         public Vector3 myPosition;
         public Vector3 myForward;
         public string myType;
         public string myFaction;
         public string myInstanceID;
 
-        //Vision Data
-        public Dictionary<string, Vector3> visibleAgents;
+        // Vision Data - now with complete info
+        public Dictionary<string, VisibleAgentInfo> visibleAgents;
         public int visibleCount;
 
-        //Hearing Data
-        public Dictionary<string, Vector3> heardAgents;
+        // Hearing Data - now with distance
+        public Dictionary<string, HeardAgentInfo> heardAgents;
         public int heardCount;
 
         // Infection Data
@@ -52,59 +63,50 @@ public class AgentActionManager : MonoBehaviour
         public float recoveryRate;
         public bool isImmune;
         public float health;
-        // 0=Healthy, 1=Exposed, 2=Infectious, 3=Recovered, 4=Dead
         public int infectionStage;
         public float infectivity;
+
+        // Disease Timing (new)
+        public float incubationPeriod;
+        public float contagiousDuration;
     }
 
-    #endregion Data Struct
+    #endregion
 
     #region Public Interface
-    // Public property to access the controllers from other scripts
     public MovementController Movement => movementController;
     public VisionController Vision => visionController;
     public HearingController Hearing => hearingController;
-    // add others as needed
-
-    #endregion Public Interface
+    public ActionController Action => actionController;
+    #endregion
 
     #region Unity Methods
-    //Method called when the agent is created.
     void Awake()
     {
-        // Get the BaseAgent component and set up all controllers
         baseAgent = GetComponent<BaseAgent>();
-
         InitializeControllers();
     }
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Check that all required controllers are properly assigned
         ValidateControllers();
-
     }
-
-    #endregion Unity Methods
+    #endregion
 
     #region Initialization
-    // Initialize all controllers, adding them if they are missing
     private void InitializeControllers()
     {
-
-        // MovementController - Try to find an existing MovementController on this game object
         movementController = EnsureController<MovementController>();
         movementController.Initialize(baseAgent);
 
-        // VisionController - Try to find an existing VisionController on this game object
         visionController = EnsureController<VisionController>();
         visionController.Initialize(baseAgent);
 
-        // HearingController - Try to find an existing VisionController on this game object
         hearingController = EnsureController<HearingController>();
         hearingController.Initialize(baseAgent);
+
+        actionController = EnsureController<ActionController>();
+        actionController.Initialize(baseAgent);
     }
 
     private T EnsureController<T>() where T : MonoBehaviour
@@ -118,12 +120,12 @@ public class AgentActionManager : MonoBehaviour
         return controller;
     }
 
-    // Log errors for any missing controllers
     private void ValidateControllers()
     {
         ValidateController(movementController, "MovementController");
         ValidateController(visionController, "VisionController");
         ValidateController(hearingController, "HearingController");
+        ValidateController(actionController, "ActionController");
     }
 
     private void ValidateController(MonoBehaviour controller, string name)
@@ -131,64 +133,105 @@ public class AgentActionManager : MonoBehaviour
         if (controller == null)
             Debug.LogError($"{name} is not assigned or found on {baseAgent.AgentName}");
     }
-    #endregion Initialization 
+    #endregion
 
     #region Public Interface Methods
-    // Wrapper methods to expose controller functionalities
+
+    /// <summary>
+    /// Builds complete perception data for Python.
+    /// Called each decision cycle by PythonBehaviorController.
+    /// </summary>
     public AgentPerceptionData GetPerceptionData()
     {
+        // Get vision data with full details
+        var visionData = visionController.GetVisibleAgentsData();
+        Dictionary<string, VisibleAgentInfo> visibleInfo = new Dictionary<string, VisibleAgentInfo>();
+
+        foreach (var kvp in visionData)
+        {
+            visibleInfo[kvp.Key] = new VisibleAgentInfo
+            {
+                position = kvp.Value.position,
+                distance = kvp.Value.distance,
+                currentAction = kvp.Value.currentAction,
+                actionStartTime = kvp.Value.actionStartTime
+            };
+        }
+
+        // Get hearing data with distance
+        var hearingData = hearingController.GetHeardAgentsData();
+        Dictionary<string, HeardAgentInfo> heardInfo = new Dictionary<string, HeardAgentInfo>();
+
+        foreach (var kvp in hearingData)
+        {
+            heardInfo[kvp.Key] = new HeardAgentInfo
+            {
+                position = kvp.Value.position,
+                distance = kvp.Value.distance
+            };
+        }
+
         return new AgentPerceptionData
         {
-            // Get vision data from VisionController
-            visibleAgents = visionController.GetAgentsWithinSights(),
-            visibleCount = visionController.GetAgentsWithinSights().Count,
-
-            // Get hearing data from HearingController  
-            heardAgents = hearingController.GetAgentsWithinHearing(),
-            heardCount = hearingController.GetAgentsWithinHearing().Count,
-
-            // Get self data
+            // Identity
             myPosition = transform.position,
             myForward = transform.forward,
-            myType = baseAgent.Type.ToString(),      
-            myFaction = baseAgent.Faction.ToString(), 
+            myType = baseAgent.Type.ToString(),
+            myFaction = baseAgent.Faction.ToString(),
             myInstanceID = baseAgent.InstanceID,
 
-            // Infection data
+            // Vision - complete data
+            visibleAgents = visibleInfo,
+            visibleCount = visibleInfo.Count,
+
+            // Hearing - with distance
+            heardAgents = heardInfo,
+            heardCount = heardInfo.Count,
+
+            // Infection
             infectionName = baseAgent.InfectionName,
             mortalityRate = baseAgent.InfectionMortalityRate,
-            symptoms = baseAgent.Symptoms.ToArray(),           // Convert List to Array
+            symptoms = baseAgent.Symptoms.ToArray(),
             isContagious = baseAgent.IsContagious,
             recoveryRate = baseAgent.RecoveryRate,
             isImmune = baseAgent.IsImmune,
             health = baseAgent.Health,
-            infectionStage = (int)baseAgent.CurrentInfectionStage,  // Enum to int
-            infectivity = baseAgent.Infectivity
+            infectionStage = (int)baseAgent.CurrentInfectionStage,
+            infectivity = baseAgent.Infectivity,
+
+            // Disease Timing
+            incubationPeriod = baseAgent.IncubationPeriod,
+            contagiousDuration = baseAgent.ContagiousDuration
         };
     }
 
-    // Walking method
+    // ===== Movement Wrappers =====
+
     public void MoveTo(Vector3 position) => Movement.WalkTo(position);
-
-    // Running method
     public void RunTo(Vector3 position) => Movement.RunTo(position);
-
-    // Stop movement method
     public void Stop() => Movement.StopMoving();
+    public bool Quarantine() => Movement.Quarantine();
+    public void Avoid(string targetID) => Movement.Avoid(targetID);
+    public void Avoid(string targetID1, string targetID2) => Movement.Avoid(targetID1, targetID2);
 
-    // Get targets within sight
-    public void GetAgentsWithinSights() => Vision.GetAgentsWithinSights();
+    // ===== Combat Wrappers =====
 
-    // Query methods to check agent status
+    public ActionController.ActionResult Attack(string targetID) => Action.Attack(targetID);
+    public ActionController.ActionResult Claw(string targetID) => Action.Claw(targetID);
+    public ActionController.ActionResult Bite(string targetID) => Action.Bite(targetID);
+    public ActionController.ActionResult Sneeze() => Action.Sneeze();
+    public ActionController.ActionResult Cough() => Action.Cough();
 
-    // Check if the agent is currently moving
+    // ===== Health Wrapper =====
+
+    public void ModifyHealth(float amount) => Action.ModifyHealth(amount);
+
+    // ===== Query Properties =====
+
     public bool IsMoving => Movement != null && Movement.IsMoving;
-
-    // Get the agent's current position in the world
+    public bool IsQuarantined => Movement != null && Movement.IsQuarantined;
     public Vector3 CurrentPosition => transform.position;
-
-    // Get the position the agent is moving toward
     public Vector3 TargetPosition => Movement != null ? Movement.TargetPosition : transform.position;
 
-    #endregion Public Interface Methods
+    #endregion
 }
