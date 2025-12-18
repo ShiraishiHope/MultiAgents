@@ -24,6 +24,7 @@ public class AgentActionManager : MonoBehaviour
         public float distance;
         public string currentAction;
         public float actionStartTime;
+        public string faction;
     }
 
     /// <summary>
@@ -149,12 +150,14 @@ public class AgentActionManager : MonoBehaviour
 
         foreach (var kvp in visionData)
         {
+            BaseAgent agent = BaseAgent.GetAgentByInstanceID(kvp.Key);
             visibleInfo[kvp.Key] = new VisibleAgentInfo
             {
                 position = kvp.Value.position,
                 distance = kvp.Value.distance,
                 currentAction = kvp.Value.currentAction,
-                actionStartTime = kvp.Value.actionStartTime
+                actionStartTime = kvp.Value.actionStartTime,
+                faction = agent != null ? agent.Faction.ToString() : "Unknown"
             };
         }
 
@@ -221,6 +224,17 @@ public class AgentActionManager : MonoBehaviour
     public ActionController.ActionResult Bite(string targetID) => Action.Bite(targetID);
     public ActionController.ActionResult Sneeze() => Action.Sneeze();
     public ActionController.ActionResult Cough() => Action.Cough();
+
+    // ===== Predator Kill Action =====
+    public void Kill(string targetID)
+    {
+        BaseAgent targetAgent = BaseAgent.GetAgentByInstanceID(targetID);
+        if (targetAgent != null)
+        {
+            targetAgent.Die(); // méthode existante dans BaseAgent
+            Debug.Log($"{targetAgent.InstanceID} has been killed by a predator!");
+        }
+    }
 
     // ===== Health Wrapper =====
 

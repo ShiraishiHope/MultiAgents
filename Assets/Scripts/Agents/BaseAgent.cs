@@ -44,6 +44,10 @@ public class BaseAgent : MonoBehaviour
     public string InstanceID => instanceID;
     public CharacterType Type => characterType;
     public FactionType Faction => faction;
+    public void SetFaction(FactionType newFaction)
+    {
+        faction = newFaction;
+    }
     //Enum of different possibles states for the agent
     public enum AgentState { Walking, Running, Idle, Sleeping, Dead }
     AgentState currentState = AgentState.Idle;
@@ -56,7 +60,9 @@ public class BaseAgent : MonoBehaviour
     public enum FactionType
     {
         Human,
-        Skeleton
+        Skeleton,
+        Predator,
+        Prey
     }
     // Access current state
     public AgentState CurrentState => currentState;

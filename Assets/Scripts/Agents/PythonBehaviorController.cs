@@ -294,6 +294,7 @@ public class PythonBehaviorController : MonoBehaviour
                     agentData["distance"] = new PyFloat(kvp.Value.distance);
                     agentData["current_action"] = new PyString(kvp.Value.currentAction);
                     agentData["action_start_time"] = new PyFloat(kvp.Value.actionStartTime);
+                    agentData["faction"] = new PyString(kvp.Value.faction);
                     visibleDict[new PyString(kvp.Key)] = agentData;
                 }
             }
@@ -509,6 +510,10 @@ public class PythonBehaviorController : MonoBehaviour
 
             case "avoid":
                 ExecuteAvoidAction(action);
+                break;
+
+            case "kill":
+                actionManager.Kill(action.targetID);
                 break;
 
             default:

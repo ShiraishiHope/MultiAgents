@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 268789124}
   - component: {fileID: 268789125}
   - component: {fileID: 268789126}
+  - component: {fileID: 268789127}
   m_Layer: 0
   m_Name: AgentSpawner
   m_TagString: Untagged
@@ -230,7 +231,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 268789121}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36de0ccafcbfccb45bb84122555e8ea1, type: 3}
   m_Name: 
@@ -248,6 +249,25 @@ MonoBehaviour:
   recoveryRate: 0.9
   incubationPeriod: 5
   contagiousDuration: 200
+--- !u!114 &268789127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268789121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d108cac1632272d49ae1b7e134d3d11c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PredatorPreySpawner
+  totalAgents: 100
+  predatorRatio: 0.3
+  predatorPrefab: {fileID: -4812724086778220992, guid: 8741cd6c8b9fc3947999191d0c381f50, type: 3}
+  preyPrefab: {fileID: 4395860408063735346, guid: 4ecab060b0afb5d4db61f7f1311b9e24, type: 3}
+  spawnRadius: 60
+  minSpawnDistance: 3
+  maxSpawnAttempts: 100
 --- !u!1 &1370022699
 GameObject:
   m_ObjectHideFlags: 0
