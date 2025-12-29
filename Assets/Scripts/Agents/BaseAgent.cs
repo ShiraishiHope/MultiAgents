@@ -44,8 +44,12 @@ public class BaseAgent : MonoBehaviour
     public string InstanceID => instanceID;
     public CharacterType Type => characterType;
     public FactionType Faction => faction;
+    public void SetFaction(FactionType newFaction)
+    {
+        faction = newFaction;
+    }
     //Enum of different possibles states for the agent
-    public enum AgentState { Walking, Running, Idle, Sleeping, Dead }
+    public enum AgentState { Walking, Running, Idle,Busy, Sleeping, Dead }
     AgentState currentState = AgentState.Idle;
     public string CurrentAction => currentAction;
     public float ActionStartTime => actionStartTime;
@@ -56,7 +60,9 @@ public class BaseAgent : MonoBehaviour
     public enum FactionType
     {
         Human,
-        Skeleton
+        Skeleton,
+        Predator,
+        Prey
     }
     // Access current state
     public AgentState CurrentState => currentState;
@@ -229,7 +235,7 @@ public class BaseAgent : MonoBehaviour
     /// </summary>
     public void Die()
     {
-        if (infectionStage == InfectionStage.Dead) return;  // Prevent double death
+        if (currentState == AgentState.Dead && infectionStage == InfectionStage.Dead) return;  // Prevent double death
 
         health = 0f;
         infectionStage = InfectionStage.Dead;
@@ -261,6 +267,7 @@ public class BaseAgent : MonoBehaviour
     //Change state of an agent
     public void ChangeState(AgentState state)
     {
+        if (currentState == AgentState.Dead) return;
         currentState = state;
     }
 

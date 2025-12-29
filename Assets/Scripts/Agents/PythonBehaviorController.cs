@@ -257,6 +257,7 @@ public class PythonBehaviorController : MonoBehaviour
         perceptionDict["my_z"] = new PyFloat(data.myPosition.z);
         perceptionDict["my_type"] = new PyString(data.myType);
         perceptionDict["my_faction"] = new PyString(data.myFaction);
+        perceptionDict["my_state"] = new PyString(data.myState);
 
         // ----- HEALTH/STATUS -----
         perceptionDict["health"] = new PyFloat(data.health);
@@ -294,6 +295,8 @@ public class PythonBehaviorController : MonoBehaviour
                     agentData["distance"] = new PyFloat(kvp.Value.distance);
                     agentData["current_action"] = new PyString(kvp.Value.currentAction);
                     agentData["action_start_time"] = new PyFloat(kvp.Value.actionStartTime);
+                    agentData["faction"] = new PyString(kvp.Value.faction);
+                    agentData["state"] = new PyString(kvp.Value.state);
                     visibleDict[new PyString(kvp.Key)] = agentData;
                 }
             }
@@ -509,6 +512,10 @@ public class PythonBehaviorController : MonoBehaviour
 
             case "avoid":
                 ExecuteAvoidAction(action);
+                break;
+
+            case "kill":
+                actionManager.Kill(action.targetID);
                 break;
 
             default:

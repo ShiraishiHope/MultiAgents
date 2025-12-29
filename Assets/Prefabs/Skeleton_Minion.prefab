@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2406477957130087985}
   - component: {fileID: 3762854853610455660}
   - component: {fileID: 1696714882742283680}
+  - component: {fileID: 62885078604650051}
   m_Layer: 0
   m_Name: Skeleton_Minion
   m_TagString: Untagged
@@ -53,6 +54,17 @@ MonoBehaviour:
   nameText: {fileID: 0}
   characterType: 5
   faction: 1
+  infectionName: None
+  infectionMortalityRate: 0
+  incubationPeriod: 20
+  contagiousDuration: 30
+  symptoms: []
+  infectivity: 0.5
+  isContagious: 0
+  recoveryRate: 0
+  isImmune: 0
+  health: 100
+  infectionStage: 0
 --- !u!114 &3762854853610455660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +94,29 @@ MonoBehaviour:
   movementController: {fileID: 0}
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
+  actionController: {fileID: 0}
+--- !u!95 &62885078604650051
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853640791853296127}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2009771095401140390
 GameObject:
   m_ObjectHideFlags: 0

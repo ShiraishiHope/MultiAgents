@@ -144,6 +144,35 @@ public class ActionController : MonoBehaviour
         Debug.Log($"{baseAgent.InstanceID} bit {targetID} for {damage:F1} damage");
         return lastActionResult;
     }
+
+    /// <summary>
+    /// Instantly kills the target agent. Used by predators.
+    /// No damage calculation - immediate death.
+    /// </summary>
+    public ActionResult Kill(string targetID)
+    {
+        lastActionResult = new ActionResult();
+        baseAgent.SetCurrentAction("kill");
+
+        // Look up target - no range check for kill (assume already validated proximity)
+        BaseAgent target = BaseAgent.GetAgentByInstanceID(targetID);
+
+        if (target == null)
+        {
+            lastActionResult.failReason = "Target not found";
+            Debug.LogWarning($"{baseAgent.InstanceID} tried to kill {targetID} but target not found");
+            return lastActionResult;
+        }
+
+        // Instant death
+        target.Die();
+
+        lastActionResult.success = true;
+        Debug.Log($"{baseAgent.InstanceID} killed {targetID}!");
+
+        return lastActionResult;
+    }
+
     #endregion
 
     #region Area Effect Actions

@@ -28,6 +28,8 @@ public class VisionController : MonoBehaviour
         public float distance;
         public string currentAction;
         public float actionStartTime;
+        public string faction;
+        public string state;
     }
 
     #endregion Data Structures
@@ -82,7 +84,9 @@ public class VisionController : MonoBehaviour
                         position = targetPosition,
                         distance = distance,
                         currentAction = agent.CurrentAction,
-                        actionStartTime = agent.ActionStartTime
+                        actionStartTime = agent.ActionStartTime,
+                        faction = agent.Faction.ToString(),
+                        state = agent.CurrentState.ToString()
                     };
 
                     visibleAgents.Add(agent.InstanceID, data);

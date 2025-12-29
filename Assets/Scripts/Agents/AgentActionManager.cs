@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class AgentActionManager : MonoBehaviour
@@ -24,6 +25,8 @@ public class AgentActionManager : MonoBehaviour
         public float distance;
         public string currentAction;
         public float actionStartTime;
+        public string faction;
+        public string state;
     }
 
     /// <summary>
@@ -46,6 +49,7 @@ public class AgentActionManager : MonoBehaviour
         public string myType;
         public string myFaction;
         public string myInstanceID;
+        public string myState;
 
         // Vision Data - now with complete info
         public Dictionary<string, VisibleAgentInfo> visibleAgents;
@@ -154,7 +158,9 @@ public class AgentActionManager : MonoBehaviour
                 position = kvp.Value.position,
                 distance = kvp.Value.distance,
                 currentAction = kvp.Value.currentAction,
-                actionStartTime = kvp.Value.actionStartTime
+                actionStartTime = kvp.Value.actionStartTime,
+                faction = kvp.Value.faction,
+                state = kvp.Value.state,
             };
         }
 
@@ -179,6 +185,7 @@ public class AgentActionManager : MonoBehaviour
             myType = baseAgent.Type.ToString(),
             myFaction = baseAgent.Faction.ToString(),
             myInstanceID = baseAgent.InstanceID,
+            myState = baseAgent.CurrentState.ToString(),
 
             // Vision - complete data
             visibleAgents = visibleInfo,
@@ -221,6 +228,9 @@ public class AgentActionManager : MonoBehaviour
     public ActionController.ActionResult Bite(string targetID) => Action.Bite(targetID);
     public ActionController.ActionResult Sneeze() => Action.Sneeze();
     public ActionController.ActionResult Cough() => Action.Cough();
+
+    // ===== Predator Kill Action =====
+    public ActionController.ActionResult Kill(string targetID) => Action.Kill(targetID);
 
     // ===== Health Wrapper =====
 
