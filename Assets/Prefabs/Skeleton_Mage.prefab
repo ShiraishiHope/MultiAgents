@@ -114,6 +114,8 @@ GameObject:
   - component: {fileID: 5174207825375298437}
   - component: {fileID: -6193809335702582244}
   - component: {fileID: -8557659330017249516}
+  - component: {fileID: -2984832173833145759}
+  - component: {fileID: 7045260784021175714}
   m_Layer: 0
   m_Name: Skeleton_Mage
   m_TagString: Untagged
@@ -155,6 +157,17 @@ MonoBehaviour:
   nameText: {fileID: 0}
   characterType: 4
   faction: 1
+  infectionName: None
+  infectionMortalityRate: 0
+  incubationPeriod: 20
+  contagiousDuration: 30
+  symptoms: []
+  infectivity: 0.5
+  isContagious: 0
+  recoveryRate: 0
+  isImmune: 0
+  health: 100
+  infectionStage: 0
 --- !u!114 &-6193809335702582244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,6 +197,41 @@ MonoBehaviour:
   movementController: {fileID: 0}
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
+  actionController: {fileID: 0}
+--- !u!95 &-2984832173833145759
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4010995826325797749}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: cdc0c4db6fdbb6440a947008917d705e, type: 3}
+  m_Controller: {fileID: 9100000, guid: 19dc5a5bdfab6594282e92234adbcf20, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7045260784021175714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4010995826325797749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
 --- !u!1 &4761492236757536583
 GameObject:
   m_ObjectHideFlags: 0

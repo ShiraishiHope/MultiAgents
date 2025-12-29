@@ -148,6 +148,8 @@ GameObject:
   - component: {fileID: 649500231798666766}
   - component: {fileID: -7231274124073719576}
   - component: {fileID: 1952667276911992533}
+  - component: {fileID: 5821218042810744534}
+  - component: {fileID: -4096289863792130843}
   m_Layer: 0
   m_Name: Human_Mage
   m_TagString: Untagged
@@ -230,6 +232,40 @@ MonoBehaviour:
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
   actionController: {fileID: 0}
+--- !u!95 &5821218042810744534
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4257527729855357338}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 1e1513b79bae4274ab3ab9daefcfc210, type: 3}
+  m_Controller: {fileID: 9100000, guid: d6da3d281cbaa32418edef6d9db4d742, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-4096289863792130843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4257527729855357338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
 --- !u!1 &4400212730464802598
 GameObject:
   m_ObjectHideFlags: 0

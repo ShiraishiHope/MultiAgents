@@ -250,6 +250,8 @@ GameObject:
   - component: {fileID: 7500510491458530811}
   - component: {fileID: 7190062435496280729}
   - component: {fileID: 2442254597186842206}
+  - component: {fileID: -8106091448773592398}
+  - component: {fileID: -5705619778468852632}
   m_Layer: 0
   m_Name: Human_Knight
   m_TagString: Untagged
@@ -291,6 +293,17 @@ MonoBehaviour:
   nameText: {fileID: 0}
   characterType: 1
   faction: 0
+  infectionName: None
+  infectionMortalityRate: 0
+  incubationPeriod: 20
+  contagiousDuration: 30
+  symptoms: []
+  infectivity: 0.5
+  isContagious: 0
+  recoveryRate: 0
+  isImmune: 0
+  health: 100
+  infectionStage: 0
 --- !u!114 &7190062435496280729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,6 +333,41 @@ MonoBehaviour:
   movementController: {fileID: 0}
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
+  actionController: {fileID: 0}
+--- !u!95 &-8106091448773592398
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7773991836074234317}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 8a73952359331424e8f80ea2b3be6c68, type: 3}
+  m_Controller: {fileID: 9100000, guid: 19dc5a5bdfab6594282e92234adbcf20, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5705619778468852632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7773991836074234317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
 --- !u!1001 &1066944037221312079
 PrefabInstance:
   m_ObjectHideFlags: 0

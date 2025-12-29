@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3762854853610455660}
   - component: {fileID: 1696714882742283680}
   - component: {fileID: 62885078604650051}
+  - component: {fileID: 344382069677990822}
   m_Layer: 0
   m_Name: Skeleton_Minion
   m_TagString: Untagged
@@ -104,8 +105,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853640791853296127}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 9d4046ceb92f7e646a78337069622a14, type: 3}
+  m_Controller: {fileID: 9100000, guid: 19dc5a5bdfab6594282e92234adbcf20, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -117,6 +118,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &344382069677990822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853640791853296127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
 --- !u!1 &2009771095401140390
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,7 +51,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 3543698089625107784, guid: 9d4046ceb92f7e646a78337069622a14, type: 3}
+  m_Motion: {fileID: 3543698089625107784, guid: 656d9a6eb2616e64281ed8c9625a9ce6, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -77,7 +77,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -1923750366902163184, guid: ef6d2dca5c35391409fde2c4bdeeede4, type: 3}
+  m_Motion: {fileID: -1923750366902163184, guid: 656d9a6eb2616e64281ed8c9625a9ce6, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -89,7 +89,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HumanoidController
+  m_Name: H_RogueController
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Blend
@@ -137,7 +137,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -3100369314251171874, guid: 9d4046ceb92f7e646a78337069622a14, type: 3}
+  m_Motion: {fileID: -3100369314251171874, guid: 656d9a6eb2616e64281ed8c9625a9ce6, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -163,7 +163,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7060811993321468294, guid: 9d4046ceb92f7e646a78337069622a14, type: 3}
+  m_Motion: {fileID: 7060811993321468294, guid: 656d9a6eb2616e64281ed8c9625a9ce6, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

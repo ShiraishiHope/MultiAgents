@@ -148,6 +148,8 @@ GameObject:
   - component: {fileID: 1426135250384579833}
   - component: {fileID: -5658784640356242248}
   - component: {fileID: -385833208224287503}
+  - component: {fileID: 2139684828274077588}
+  - component: {fileID: 6326349720004913936}
   m_Layer: 0
   m_Name: Human_Rogue
   m_TagString: Untagged
@@ -230,6 +232,40 @@ MonoBehaviour:
   visionController: {fileID: 0}
   hearingController: {fileID: 0}
   actionController: {fileID: 0}
+--- !u!95 &2139684828274077588
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6113306684776762616}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 656d9a6eb2616e64281ed8c9625a9ce6, type: 3}
+  m_Controller: {fileID: 9100000, guid: 19dc5a5bdfab6594282e92234adbcf20, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6326349720004913936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6113306684776762616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
 --- !u!1 &7829199280468726661
 GameObject:
   m_ObjectHideFlags: 0
