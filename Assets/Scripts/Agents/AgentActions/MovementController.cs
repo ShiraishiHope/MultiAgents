@@ -6,6 +6,7 @@ public class MovementController : MonoBehaviour
     #region References
     // References to other components this controller needs
     private BaseAgent baseAgent;
+    private CharacterController characterController;
     #endregion
 
     #region Movement Parameters
@@ -39,6 +40,13 @@ public class MovementController : MonoBehaviour
         // Store references passed from the action manager
         baseAgent = agent;
 
+        //get Character Controller
+        characterController = GetComponent<CharacterController>();
+        if (characterController == null)
+        {
+            Debug.LogError($"No CharacterController on {agent.AgentName}! Add one to the prefab.");
+        }
+
         // Set initial target to current position (not moving)
         targetPosition = transform.position;
     }
@@ -49,12 +57,13 @@ public class MovementController : MonoBehaviour
     {
         // Only process movement if we're supposed to be moving
         if (!isMoving) return;
+        if (characterController == null) return;
 
         // Calculate direction to target
         Vector3 direction = (targetPosition - transform.position).normalized;
 
         // Move toward target at current speed
-        transform.position += direction * currentSpeed * Time.deltaTime;
+        characterController.Move(direction * currentSpeed * Time.deltaTime);
 
         // Check if we've reached the target
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);

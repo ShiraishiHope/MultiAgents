@@ -46,7 +46,7 @@ public class AgentSpawner : MonoBehaviour
         Vector2 randomCircle = Random.insideUnitCircle * 60f;
 
         //Convert to 3D position
-        Vector3 spawnPosition = new Vector3(randomCircle.x, 0f, randomCircle.y);
+        Vector3 spawnPosition = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
         return spawnPosition;
     }

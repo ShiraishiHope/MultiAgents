@@ -333,7 +333,7 @@ public class BaseAgent : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"No TextMeshProUGUI component found in children of {agentName}");
+            Debug.LogWarning($"No TextMeshProUGUI component found in children of {agentName}");
         }
     }
 

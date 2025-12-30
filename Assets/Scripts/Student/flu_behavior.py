@@ -1,23 +1,59 @@
-"""
-Flu Behavior - Passive infection spread test
+﻿"""
+Flu Behavior - Batch Processing Version
 Agents wander randomly and sneeze/cough when contagious
 """
 
 import random
 
-# Track each agent's wander target
+# =========================
+# ===== GLOBAL STATE ======
+# =========================
+
 wander_data = {}  # {agent_id: {'target_x', 'target_z', 'time_left'}}
 
 WANDER_INTERVAL = 3.0      # Change direction every 3 seconds
-DECISION_INTERVAL = 0.1    # How often decide_action is called
-SNEEZE_CHANCE = 0.3        # 30% chance to sneeze each decision cycle when contagious
-COUGH_CHANCE = 0.2         # 20% chance to cough each decision cycle when contagious
+DECISION_INTERVAL = 0.5    # How often decide_all is called (match C#)
+SNEEZE_CHANCE = 0.3        # 30% chance to sneeze when contagious
+COUGH_CHANCE = 0.2         # 20% chance to cough when contagious
 
+
+# =========================
+# ===== BATCH WRAPPER =====
+# =========================
+
+def decide_all(all_perceptions):
+    """
+    Called by Unity once per decision cycle with ALL agents' perception data.
+    
+    For flu behavior, agents don't need to know about ALL other agents -
+    they just use their local perception (visible/heard agents).
+    So we don't need to build a shared all_agents dict here.
+    """
+    all_decisions = {}
+    
+    for agent_id, perception in all_perceptions.items():
+        try:
+            decision = decide_action(perception)
+            all_decisions[agent_id] = decision
+        except Exception as e:
+            print(f"Error processing {agent_id}: {e}")
+            all_decisions[agent_id] = build_response(0, 0, "stop", "none")
+    
+    return all_decisions
+
+
+# =========================
+# ===== AGENT LOGIC =======
+# =========================
 
 def decide_action(perception):
     """
-    Main decision function called by Unity.
+    Main decision function for a single agent.
     Agents wander randomly. When contagious, they sneeze/cough.
+    
+    This behavior demonstrates:
+    - Using local perception (heard_agents) instead of global knowledge
+    - Infection spread mechanics via sneeze/cough actions
     """
     my_id = perception['my_id']
     my_x = perception['my_x']
@@ -32,7 +68,8 @@ def decide_action(perception):
     action_type = "none"
     
     if is_contagious:
-        # Check if anyone is nearby (use heard_agents as proxy for "close")
+        # Check if anyone is nearby using heard_agents
+        # heard_count tells us how many agents are within hearing range
         heard_count = perception['heard_count']
         
         if heard_count > 0:
@@ -46,9 +83,14 @@ def decide_action(perception):
     return build_response(target_x, target_z, "walk", action_type)
 
 
+# =========================
+# ===== HELPER FUNCTIONS ==
+# =========================
+
 def get_wander_target(agent_id, current_x, current_z):
     """
     Returns a wander target, generating new one if needed.
+    Uses global wander_data to persist targets between calls.
     """
     # Initialize if new agent
     if agent_id not in wander_data:
@@ -79,18 +121,14 @@ def get_wander_target(agent_id, current_x, current_z):
 
 
 def generate_random_target(current_x, current_z):
-    """
-    Generate a random point 5-10 units away.
-    """
+    """Generate a random point 5-10 units away."""
     offset_x = random.uniform(-10.0, 10.0)
     offset_z = random.uniform(-10.0, 10.0)
     return current_x + offset_x, current_z + offset_z
 
 
 def calculate_distance(x1, z1, x2, z2):
-    """
-    Euclidean distance between two points.
-    """
+    """Euclidean distance between two points."""
     dx = x2 - x1
     dz = z2 - z1
     return (dx * dx + dz * dz) ** 0.5
@@ -99,6 +137,9 @@ def calculate_distance(x1, z1, x2, z2):
 def build_response(target_x, target_z, movement_type, action_type):
     """
     Build the response dict in the format C# expects.
+    
+    Movement types: "walk", "run", "stop", "none"
+    Action types: "none", "sneeze", "cough", "attack", "bite", "claw", etc.
     """
     return {
         "movement": {

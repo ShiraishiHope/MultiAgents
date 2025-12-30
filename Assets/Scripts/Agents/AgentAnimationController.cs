@@ -17,9 +17,6 @@ public class AgentAnimationController : MonoBehaviour
 
     void Update()
     {
-
-        Debug.Log($"{baseAgent.InstanceID}: {baseAgent.CurrentState}");
-
         if (baseAgent.CurrentState == lastState) return;
 
         lastState = baseAgent.CurrentState;
@@ -30,7 +27,6 @@ public class AgentAnimationController : MonoBehaviour
                 animator.Play("Idle");
                 break;
             case BaseAgent.AgentState.Walking:
-                Debug.Log($"{baseAgent.InstanceID}: Playing Walk");
                 animator.Play("Walk");
                 break;
             case BaseAgent.AgentState.Running:

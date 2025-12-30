@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -1004176610324513314}
   - component: {fileID: 7819318955008377017}
   - component: {fileID: 5396346029664852285}
+  - component: {fileID: 7415537138715691316}
   m_Layer: 0
   m_Name: Skeleton_Rogue
   m_TagString: Untagged
@@ -130,6 +131,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa3dc9c97ae71644a6fa63e188f4ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentAnimationController
+--- !u!143 &7415537138715691316
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3543810233988209698}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &4926042211982614958
 GameObject:
   m_ObjectHideFlags: 0

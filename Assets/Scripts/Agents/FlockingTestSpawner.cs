@@ -58,7 +58,7 @@ public class FlockingTestSpawner : MonoBehaviour
         {
             // Generate random position within spawn area (circle)
             Vector2 randomCircle = Random.insideUnitCircle * spawnAreaRadius;
-            Vector3 candidatePos = new Vector3(randomCircle.x, 0f, randomCircle.y);
+            Vector3 candidatePos = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
             // Check if position is valid (not too close to others)
             if (IsValidSpawnPosition(candidatePos))
@@ -95,7 +95,7 @@ public class FlockingTestSpawner : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(Vector3.zero, spawnAreaRadius);
+        Gizmos.DrawWireSphere(transform.position, spawnAreaRadius);
 
         Gizmos.color = Color.green;
         foreach (Vector3 pos in spawnedPositions)

@@ -74,7 +74,7 @@ public class InfectionTestSpawner : MonoBehaviour
         for (int attempt = 0; attempt < maxSpawnAttempts; attempt++)
         {
             Vector2 randomCircle = Random.insideUnitCircle * spawnAreaRadius;
-            Vector3 candidatePos = new Vector3(randomCircle.x, 0f, randomCircle.y);
+            Vector3 candidatePos = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
             if (IsValidSpawnPosition(candidatePos))
             {
@@ -129,6 +129,6 @@ public class InfectionTestSpawner : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(Vector3.zero, spawnAreaRadius);
+        Gizmos.DrawWireSphere(transform.position, spawnAreaRadius);
     }
 }
