@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67147f95421f95478d3cf5ff9f55589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonBehaviorController
-  pythonScriptName: robot_agent 1
+  pythonScriptName: robot
   decisionInterval: 0.1
 --- !u!114 &7525930326550077079
 MonoBehaviour:

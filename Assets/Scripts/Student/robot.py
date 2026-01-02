@@ -26,6 +26,7 @@ def decide_action(perception):
     items = perception.get('items', [])
     deposites = perception.get('deposites',[])
     all_agents = perception.get('all_agents', {})
+    obstacles = perception.get('obstacles', [])
 
     # 2. DETECTION DES TARGETS DES AGENTS
     reserved_ids = []
@@ -55,7 +56,7 @@ def decide_action(perception):
     dist = math.hypot(target_x - my_x, target_z - my_z)
 
     # 5. DÉCISION ACTION & MOUVEMENT
-    movement_type = "stop"
+    movement_type = "walk"
     action_type = "none"
   
 
@@ -71,24 +72,32 @@ def decide_action(perception):
 # 6. ÉVITEMENT 
     sep_x, sep_z = 0.0, 0.0
     
-    # Calcul de la distance à la cible actuelle (item ou zone de dépôt)
+    # Calcul de la distance à la cible actuelle
     dist_to_final_target = math.hypot(target_x - my_x, target_z - my_z)
 
-    # On n'applique l'évitement QUE si on n'est pas déjà arrivé tout près du but
-    # Cela permet au robot de ne pas être "poussé" au moment crucial
+    # On désactive l'évitement global quand on est très proche du but (1.2m)
+    # Sinon le robot ne pourra jamais toucher l'étagère ou la zone de dépose
     if dist_to_final_target > 1.2: 
+        
+        # --- ÉVITEMENT OBSTACLES (Murs/Étagères) ---
+        for obs in obstacles:
+            dx, dz = my_x - obs.get('x', 0.0), my_z - obs.get('z', 0.0)
+            d = math.hypot(dx, dz)
+            if 0 < d < 3.0:
+                strength = (3.0 - d) / 3.0
+                sep_x += (dx / d) * strength * 3.0 # Force forte pour le décor
+                sep_z += (dz / d) * strength * 3.0
+
+        # --- ÉVITEMENT AGENTS ---
         for _, pos in all_agents.items():
             dx, dz = my_x - pos.get('x', 0.0), my_z - pos.get('z', 0.0)
             d = math.hypot(dx, dz)
-            
-            if 0 < d < 2: # Rayon d'évitement légèrement augmenté pour anticiper
-                strength = (2 - d) / 2
-                # On ajoute une force de séparation
-                sep_x += (dx / d) * strength * 2.0 
-                sep_z += (dz / d) * strength * 2.0 
+            if 0 < d < 3.0:
+                strength = (3.0 - d) / 3.0
+                sep_x += (dx / d) * strength * 2.0 # Force moyenne pour les mobiles
+                sep_z += (dz / d) * strength * 2.0
 
     # 7. CALCUL FINAL DU MOUVEMENT
-    # On ajoute la séparation à la cible, mais on bride la force pour éviter les bonds
     final_target_x = target_x + sep_x
     final_target_z = target_z + sep_z
 

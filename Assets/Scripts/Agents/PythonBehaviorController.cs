@@ -330,6 +330,25 @@ public class PythonBehaviorController : MonoBehaviour
                 perceptionDict["all_agents"] = allAgentsDict;
         }
 
+        using (PyList obstacleList = new PyList())
+        {
+            // On récupère tous les objets avec le tag Obstacle
+            GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+
+            foreach (GameObject obs in obstacles)
+            {
+                using (PyDict obsData = new PyDict())
+                {
+                    obsData["x"] = new PyFloat(obs.transform.position.x);
+                    obsData["z"] = new PyFloat(obs.transform.position.z);
+                    // On peut ajouter la taille de l'obstacle si besoin
+                    obsData["radius"] = new PyFloat(1.5f);
+                    obstacleList.Append(obsData);
+                }
+            }
+            perceptionDict["obstacles"] = obstacleList;
+        } 
+
         return perceptionDict;
     }
 
@@ -480,7 +499,7 @@ public class PythonBehaviorController : MonoBehaviour
                         Debug.Log("Objet ramassé !");
                     }
                 }
-                break;
+                break; 
 
             case "drop_off":
                 if (HasItemAttached())
