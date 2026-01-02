@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.AssetImporters;
 using UnityEngine;
 
 public class PythonBehaviorController : MonoBehaviour
 {
     [Header("Python Behavior Settings")]
-    [SerializeField] private string pythonScriptName = "random_movement";
+    [SerializeField] private string pythonScriptName = "";
     [SerializeField] private float decisionInterval = 2f;
 
     private AgentActionManager actionManager;
@@ -16,6 +17,9 @@ public class PythonBehaviorController : MonoBehaviour
     private static bool pythonInitialized = false;
     private PyObject pythonModule;
     private float nextDecisionTime;
+    private string currentTargetID = "";
+
+    public string CurrentTargetID => currentTargetID;
 
     #region Decision Data Structures
 
@@ -204,6 +208,8 @@ public class PythonBehaviorController : MonoBehaviour
 
                 // Import the student's script
                 pythonModule = Py.Import(scriptName);
+                PyObject importlib = Py.Import("importlib");
+                pythonModule = importlib.InvokeMethod("reload", pythonModule);
                 Debug.Log($"✓ Loaded Python behavior: {scriptName}");
             }
         }
@@ -233,10 +239,11 @@ public class PythonBehaviorController : MonoBehaviour
                 PyObject result = decideAction.Invoke(perceptionDict);
 
                 AgentDecisionData decision = ParseDecisionResponse(result);
+                currentTargetID = currentTargetID = decision.action.targetID;
 
                 ExecuteDecision(decision);
 
-                perceptionDict.Dispose();                
+                perceptionDict.Dispose();
             }
         }
         catch (Exception e)
@@ -248,84 +255,79 @@ public class PythonBehaviorController : MonoBehaviour
     //Build perception dictionnary to send to Python (API Input)
     private PyDict BuildPerceptionDict()
     {
-        AgentActionManager.AgentPerceptionData data = actionManager.GetPerceptionData();
+        // On récupère les données de base sans passer par Vision/Hearing pour éviter les NullReference
         PyDict perceptionDict = new PyDict();
+        Vector3 spawn = baseAgent.SpawnPosition;
 
-        // Basic identity and position information
-        perceptionDict["my_id"] = new PyString(data.myInstanceID);
-        perceptionDict["my_x"] = new PyFloat(data.myPosition.x);
-        perceptionDict["my_z"] = new PyFloat(data.myPosition.z);
-        perceptionDict["my_type"] = new PyString(data.myType);
-        perceptionDict["my_faction"] = new PyString(data.myFaction);
 
-        // ----- HEALTH/STATUS DATA -----
-        perceptionDict["health"] = new PyFloat(data.health);
-        perceptionDict["infection_name"] = new PyString(data.infectionName);
-        perceptionDict["infection_stage"] = new PyInt(data.infectionStage);
-        perceptionDict["mortality_rate"] = new PyFloat(data.mortalityRate);
-        perceptionDict["recovery_rate"] = new PyFloat(data.recoveryRate);
-        perceptionDict["infectivity"] = new PyFloat(data.infectivity);
-        perceptionDict["is_contagious"] = new PyInt(data.isContagious ? 1 : 0);
-        perceptionDict["is_immune"] = new PyInt(data.isImmune ? 1 : 0);
+        // 1. Identité et Position
+        perceptionDict["my_id"] = new PyString(baseAgent.InstanceID);
+        perceptionDict["my_x"] = new PyFloat(transform.position.x);
+        perceptionDict["my_z"] = new PyFloat(transform.position.z);
+        perceptionDict["spawn_x"] = new PyFloat(spawn.x);
+        perceptionDict["spawn_z"] = new PyFloat(spawn.z);
 
-        // Symptoms as a list
-        using (PyList symptomsList = new PyList())
+        perceptionDict["is_carrying"] = new PyInt(HasItemAttached() ? 1 : 0);
+
+        // 3. Limites de l'usine (Sol centré en 0,0)
+        perceptionDict["factory_min_x"] = new PyFloat(-10f);
+        perceptionDict["factory_max_x"] = new PyFloat(10f);
+        perceptionDict["factory_min_z"] = new PyFloat(-10f);
+        perceptionDict["factory_max_z"] = new PyFloat(10f);
+
+        // 4. Liste des items (Tag: Item)
+        using (PyList itemList = new PyList())
         {
-            foreach (string symptom in data.symptoms)
+            GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+            foreach (var item in items)
             {
-                symptomsList.Append(new PyString(symptom));
-            }
-            perceptionDict["symptoms"] = symptomsList;
-        }
-
-        // Agents this agent can currently see (within sight cone)
-        using (PyDict visibleDict = new PyDict())
-        {
-            foreach (var kvp in data.visibleAgents)
-            {
-                using (PyDict agentData = new PyDict())
+                // On ne prend que les étagères qui n'ont pas de parent (posées au sol)
+                if (item.transform.parent == null)
                 {
-                    agentData["x"] = new PyFloat(kvp.Value.x);
-                    agentData["z"] = new PyFloat(kvp.Value.z);
-                    visibleDict[new PyString(kvp.Key)] = agentData;
+                    PyDict itemData = new PyDict();
+                    itemData["x"] = new PyFloat(item.transform.position.x);
+                    itemData["z"] = new PyFloat(item.transform.position.z);
+                    itemData["id"] = new PyInt(item.GetEntityId());
+                    itemList.Append(itemData);
                 }
             }
-            perceptionDict["visible_agents"] = visibleDict;
+            perceptionDict["items"] = itemList;
         }
-        perceptionDict["visible_count"] = new PyInt(data.visibleCount);
 
-        // Agents this agent can hear (within hearing radius)
-        using (PyDict heardDict = new PyDict())
+        // 4. Liste des items (Tag: Item)
+        using (PyList depositeList = new PyList())
         {
-            foreach (var kvp in data.heardAgents)
+            GameObject[] deposites = GameObject.FindGameObjectsWithTag("Deposite");
+            foreach (var deposite in deposites)
             {
-                using (PyDict agentData = new PyDict())
+                // On ne prend que les étagères qui n'ont pas de parent (posées au sol)
+                if (deposite.transform.parent == null)
                 {
-                    agentData["x"] = new PyFloat(kvp.Value.x);
-                    agentData["z"] = new PyFloat(kvp.Value.z);
-                    heardDict[new PyString(kvp.Key)] = agentData;
+                    PyDict depositeData = new PyDict();
+                    depositeData["x"] = new PyFloat(deposite.transform.position.x);
+                    depositeData["z"] = new PyFloat(deposite.transform.position.z);
+                    depositeData["id"] = new PyInt(deposite.GetEntityId());
+                    depositeList.Append(depositeData);
                 }
             }
-            perceptionDict["heard_agents"] = heardDict;
+            perceptionDict["deposites"] = depositeList;
         }
-        perceptionDict["heard_count"] = new PyInt(data.heardCount);
 
-        // All agents in the simulation (global registry)
-        using (PyDict allAgentsDict = new PyDict())
-        {
-            Dictionary<string, Vector3> allAgents = BaseAgent.GetAllAgentsPosition();
-            foreach (var kvp in allAgents)
-            {
-                if (kvp.Key == data.myInstanceID) continue; // Skip self
-
-                using (PyDict agentData = new PyDict())
-                {
-                    agentData["x"] = new PyFloat(kvp.Value.x);
-                    agentData["z"] = new PyFloat(kvp.Value.z);
-                    allAgentsDict[new PyString(kvp.Key)] = agentData;
+        // 5. Positions des autres robots
+        using (PyDict allAgentsDict = new PyDict()) {
+                    // On a besoin d'accéder aux autres PythonBehaviorController
+                    PythonBehaviorController[] allControllers = FindObjectsByType<PythonBehaviorController>(FindObjectsSortMode.None);
+                    foreach (var controller in allControllers) {
+                    if (controller == this) continue;
+                    using (PyDict agentData = new PyDict()) {
+                        agentData["x"] = new PyFloat(controller.transform.position.x);
+                        agentData["z"] = new PyFloat(controller.transform.position.z);
+                        // ON ENVOIE LA RÉSERVATION DE L'AUTRE ROBOT
+                        agentData["current_target_id"] = new PyString(controller.currentTargetID); 
+                        allAgentsDict[new PyString(controller.baseAgent.InstanceID)] = agentData;
+                    }
                 }
-            }
-            perceptionDict["all_agents"] = allAgentsDict;
+                perceptionDict["all_agents"] = allAgentsDict;
         }
 
         return perceptionDict;
@@ -426,7 +428,12 @@ public class PythonBehaviorController : MonoBehaviour
 
     private void ExecuteMovement(MovementDecision movement)
     {
-        Vector3 targetPosition = new Vector3(movement.targetX, 0f, movement.targetZ);
+        Vector3 targetPosition = new Vector3(
+        movement.targetX,
+        transform.position.y,   // ✅ garde la hauteur
+        movement.targetZ
+        );
+
 
         switch (movement.movementType)
         {
@@ -457,27 +464,59 @@ public class PythonBehaviorController : MonoBehaviour
         switch (action.actionType)
         {
             case "none":
-                // No action this cycle
+                // On ne fait rien, c'est l'état normal quand le robot roule
                 break;
 
-            // ===== FUTURE ACTION TYPES =====
-            // Add cases here as you implement more agent capabilities
-            //
-            // case "attack":
-            //     actionManager.Attack(action.targetID);
-            //     break;
-            //
-            // case "communicate":
-            //     string message = action.parameters["message"] as string;
-            //     actionManager.SendMessage(action.targetID, message);
-            //     break;
+            case "pick_up":
+                if (!HasItemAttached())
+                {
+                    // Trouve l'étagère la plus proche dans un rayon de 1 unité
+                    GameObject nearestShelf = FindNearestWithTag("Item", 1.0f);
+                    if (nearestShelf != null)
+                    {
+                        nearestShelf.transform.SetParent(this.transform);
+                        // On place l'étagère "sur le dos" du robot
+                        nearestShelf.transform.localPosition = new Vector3(0, 0.2f, 0);
+                        Debug.Log("Objet ramassé !");
+                    }
+                }
+                break;
 
+            case "drop_off":
+                if (HasItemAttached())
+                {
+                    // On détache l'étagère
+                    Transform shelf = GetAttachedItem();
+                    shelf.SetParent(null);
+                    shelf.gameObject.tag = "Untagged";
+                    // On la pose proprement au sol
+                    shelf.position = new Vector3(shelf.position.x, -0.08f, shelf.position.z);
+                    Debug.Log("Objet déposé !");
+                }
+                break;
             default:
                 Debug.LogWarning($"⚠ Unknown action type '{action.actionType}' for {baseAgent.InstanceID}");
                 break;
         }
     }
 
+    // Fonction utilitaire pour trouver l'étagère
+    private GameObject FindNearestWithTag(string tag, float radius)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
+        GameObject nearest = null;
+        float minDist = radius;
+        foreach (GameObject obj in objects)
+        {
+            float dist = Vector3.Distance(transform.position, obj.transform.position);
+            if (dist < minDist)
+            {
+                nearest = obj;
+                minDist = dist;
+            }
+        }
+        return nearest;
+    }
     #endregion Decision Processing
 
     void OnDestroy()
@@ -492,5 +531,21 @@ public class PythonBehaviorController : MonoBehaviour
         {
             PythonEngine.Shutdown();
         }
+    }
+
+    // Vérifie si une étagère est déjà portée
+    private bool HasItemAttached()
+    {
+        return GetAttachedItem() != null;
+    }
+
+    // Récupère le Transform de l'étagère portée
+    private Transform GetAttachedItem()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.CompareTag("Item")) return child;
+        }
+        return null;
     }
 }

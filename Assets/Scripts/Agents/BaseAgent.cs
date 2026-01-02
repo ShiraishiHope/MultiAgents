@@ -32,10 +32,11 @@ public class BaseAgent : MonoBehaviour
     #region variables
     //Static registry for all agents
     private static Dictionary<string, BaseAgent> agentRegistry = new Dictionary<string, BaseAgent>();
-
+    private Vector3 spawnPosition;
     //public properties for controlled access
     public string AgentName => agentName;
     public string InstanceID => instanceID;
+    public Vector3 SpawnPosition => spawnPosition;
     public CharacterType Type => characterType;
     public FactionType Faction => faction;
     //Enum of different possibles states for the agent
@@ -44,11 +45,12 @@ public class BaseAgent : MonoBehaviour
 
 
     //Enum of different possibles
-    public enum CharacterType { Barbarian, Knight, Mage, Rogue, Skeleton_Mage, Skeleton_Minion, Skeleton_Rogue, Skeleton_Warrior }
+    public enum CharacterType { Barbarian, Knight, Mage, Rogue, Skeleton_Mage, Skeleton_Minion, Skeleton_Rogue, Skeleton_Warrior , Robot }
     public enum FactionType
     {
         Human,
-        Skeleton
+        Skeleton,
+        None
     }
     // Access current state
     public AgentState CurrentState => currentState;
@@ -143,6 +145,8 @@ public class BaseAgent : MonoBehaviour
         if (!agentRegistry.ContainsKey(instanceID))
         {
             agentRegistry[instanceID] = this;
+            spawnPosition = transform.position;
+
         }
         else
         {

@@ -10,7 +10,7 @@ public class MovementController : MonoBehaviour
 
     #region Movement Parameters
     [Header("Movement Speeds")]
-    [SerializeField] private float walkSpeed = 3f;      // Normal walking speed
+    [SerializeField] private float walkSpeed = 2f;      // Normal walking speed
     [SerializeField] private float runSpeed = 5f;       // Running/sprinting speed
     [SerializeField] private float stoppingDistance = 0.1f;  // How close to target before stopping
 
