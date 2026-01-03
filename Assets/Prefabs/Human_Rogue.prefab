@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 2139684828274077588}
   - component: {fileID: 6326349720004913936}
   - component: {fileID: 4462280974132942741}
+  - component: {fileID: -8180639402589913104}
   m_Layer: 0
   m_Name: Human_Rogue
   m_TagString: Untagged
@@ -203,6 +204,7 @@ MonoBehaviour:
   isImmune: 0
   health: 100
   infectionStage: 0
+  hunger: 100
 --- !u!114 &-5658784640356242248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67147f95421f95478d3cf5ff9f55589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonBehaviorController
-  pythonScriptName: flu_behavior
+  pythonScriptName: gathering_behavior
   decisionInterval: 0.5
 --- !u!114 &-385833208224287503
 MonoBehaviour:
@@ -292,6 +294,26 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &-8180639402589913104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6113306684776762616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 154e9d502ad8b204798ab258f2eaf1a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfectionVisualizer
+  healthyColor: {r: 0, g: 1, b: 0, a: 1}
+  exposedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  contagiousColor: {r: 1, g: 0, b: 0, a: 1}
+  recoveredColor: {r: 0, g: 1, b: 1, a: 1}
+  deadColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  colorizeBody: 1
+  showGlowEffect: 1
+  glowIntensity: 2
 --- !u!1 &7829199280468726661
 GameObject:
   m_ObjectHideFlags: 0

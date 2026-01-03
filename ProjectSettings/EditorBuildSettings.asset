@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Visuals.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Agents.unity
+    path: Assets/Scenes/Infection.unity
     guid: be271fb96bf534c468acafdc7ea7ffcd
   - enabled: 1
     path: Assets/Scenes/Environment.unity
