@@ -253,6 +253,7 @@ GameObject:
   - component: {fileID: 2846077301621814946}
   - component: {fileID: -2869098629183076580}
   - component: {fileID: -2058526642346329953}
+  - component: {fileID: 9128831921871041119}
   m_Layer: 0
   m_Name: Human_Barbarian
   m_TagString: Untagged
@@ -394,6 +395,26 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &9128831921871041119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7474616814715468733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 154e9d502ad8b204798ab258f2eaf1a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfectionVisualizer
+  healthyColor: {r: 0, g: 1, b: 0, a: 1}
+  exposedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  contagiousColor: {r: 1, g: 0, b: 0, a: 1}
+  recoveredColor: {r: 0, g: 1, b: 1, a: 1}
+  deadColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  colorizeBody: 1
+  showGlowEffect: 1
+  glowIntensity: 2
 --- !u!1001 &4888102184408444892
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8469,7 +8469,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36de0ccafcbfccb45bb84122555e8ea1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InfectionTestSpawner
+  m_EditorClassIdentifier: Assembly-CSharp::InfectionSpawner
   agentPrefabs:
   - {fileID: 2406477957130087985, guid: 44ce0614ea5b2c344a96df18f4e0d9bf, type: 3}
   - {fileID: 8431285394811662226, guid: c60ccdf93325ae748b541602a6c43023, type: 3}

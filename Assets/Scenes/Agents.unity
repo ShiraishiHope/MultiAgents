@@ -234,7 +234,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36de0ccafcbfccb45bb84122555e8ea1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InfectionTestSpawner
+  m_EditorClassIdentifier: Assembly-CSharp::InfectionSpawner
   agentPrefabs:
   - {fileID: 649500231798666766, guid: 23a72d41f6767c3478a70e1f9416843a, type: 3}
   - {fileID: 1426135250384579833, guid: 60e50c3644d370441ab2c5df22035e0e, type: 3}
