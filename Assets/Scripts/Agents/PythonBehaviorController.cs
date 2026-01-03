@@ -78,7 +78,8 @@ public class PythonBehaviorController : MonoBehaviour
         "visible_agents", "visible_count", "heard_agents", "heard_count",
         "x", "z", "distance", "current_action", "action_start_time",
         "faction", "state", "movement", "action", "type", "target_x",
-        "target_z", "target_id", "parameters"
+        "target_z", "target_id", "parameters",
+        "hunger","visible_food", "visible_food_count"
     };
 
         foreach (string key in commonKeys)
@@ -510,6 +511,7 @@ public class PythonBehaviorController : MonoBehaviour
         SetInt(perception, "is_immune", data.isImmune ? 1 : 0);
         SetFloat(perception, "incubation_period", data.incubationPeriod);
         SetFloat(perception, "contagious_duration", data.contagiousDuration);
+        SetFloat(perception, "hunger", data.hunger);
 
         // ----- SYMPTOMS -----
         using (PyList symptomsList = new PyList())
@@ -572,6 +574,27 @@ public class PythonBehaviorController : MonoBehaviour
         }
         SetInt(perception, "heard_count", data.heardCount);
 
+        // ----- VISIBLE FOOD -----
+        using (PyDict foodDict = new PyDict())
+        {
+            if (data.visibleFood != null)
+            {
+                foreach (var food in data.visibleFood)
+                {
+                    using (PyString foodKey = new PyString(food.Key))
+                    using (PyDict foodData = new PyDict())
+                    {
+                        SetFloat(foodData, "x", food.Value.position.x);
+                        SetFloat(foodData, "z", food.Value.position.z);
+                        SetFloat(foodData, "distance", food.Value.distance);
+                        foodDict[foodKey] = foodData;
+                    }
+                }
+            }
+            perception[GetCachedKey("visible_food")] = foodDict;
+        }
+        SetInt(perception, "visible_food_count", data.visibleFoodCount);
+
         return perception;
     }
 
@@ -588,6 +611,9 @@ public class PythonBehaviorController : MonoBehaviour
             PythonBehaviorController controller = kvp.Value;
 
             if (controller == null || controller.actionManager == null) continue;
+
+            // Skip dead agents - they don't need decisions
+            if (controller.baseAgent.CurrentState == BaseAgent.AgentState.Dead) continue;
 
             using (PyString agentKey = new PyString(agentID))
             {
@@ -749,6 +775,11 @@ public class PythonBehaviorController : MonoBehaviour
                 {
                     actionManager.ModifyHealth(Convert.ToSingle(amountObj));
                 }
+                break;
+
+            // Hunger
+            case "eat":
+                actionManager.Eat(action.targetID);
                 break;
 
             default:

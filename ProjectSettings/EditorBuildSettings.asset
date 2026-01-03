@@ -8,6 +8,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Visuals.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Agents.unity
+    guid: be271fb96bf534c468acafdc7ea7ffcd
+  - enabled: 1
+    path: Assets/Scenes/Environment.unity
+    guid: 23a81475cdcd2ab4bbaf9c0255627cc6
+  - enabled: 1
+    path: Assets/Scenes/Hunger.unity
+    guid: a0eb48de66256e14fbf806c138d0d023
+  - enabled: 1
+    path: Assets/Scenes/Predation.unity
+    guid: 72b7b0dcf195d2849bfdd2af8fa74f2a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

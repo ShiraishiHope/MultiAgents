@@ -55,6 +55,13 @@ public class MovementController : MonoBehaviour
     #region Unity Lifecycle
     void Update()
     {
+        //Handle dead agents
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            isMoving = false;
+            return;
+        }
+
         // Only process movement if we're supposed to be moving
         if (!isMoving) return;
         if (characterController == null) return;
@@ -81,7 +88,12 @@ public class MovementController : MonoBehaviour
         else
         {
             // Face the direction we're moving
-            transform.forward = direction;
+            Vector3 flatDirection = new Vector3(direction.x, 0f, direction.z);
+
+            if (flatDirection.sqrMagnitude > 0.001f)
+            {
+                transform.forward = flatDirection.normalized;
+            }
         }
         //print(baseAgent.AgentName + " - " + baseAgent.InstanceID + " - " + transform.forward);
     }
@@ -92,6 +104,9 @@ public class MovementController : MonoBehaviour
     // Tell the agent to walk to a specific position
     public void WalkTo(Vector3 position)
     {
+        //handle dead agents
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead) return;
+
         // Cancel quarantine if given new movement command
         isQuarantined = false;
 
@@ -106,6 +121,9 @@ public class MovementController : MonoBehaviour
     // Tell the agent to run to a specific position
     public void RunTo(Vector3 position)
     {
+        //handle dead agents
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead) return;
+
         isQuarantined = false;
 
         targetPosition = position;
@@ -119,6 +137,9 @@ public class MovementController : MonoBehaviour
     // Stop all movement
     public void StopMoving()
     {
+        //handle dead agents
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead) return;
+
         isMoving = false;
         currentSpeed = 0f;
         targetPosition = transform.position;
@@ -132,6 +153,9 @@ public class MovementController : MonoBehaviour
 
     public bool Quarantine()
     {
+        //handle dead agents
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead) return false;
+
         // Find all objects tagged "QuarantineTent"
         GameObject[] tents = GameObject.FindGameObjectsWithTag("QuarantineTent");
 

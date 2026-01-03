@@ -29,6 +29,13 @@ public class AgentActionManager : MonoBehaviour
         public string state;
     }
 
+    // Data about visible food.
+    public struct VisibleFoodInfo
+    {
+        public Vector3 position;
+        public float distance;
+    }
+
     /// <summary>
     /// Data about a heard agent - sent to Python.
     /// </summary>
@@ -54,6 +61,8 @@ public class AgentActionManager : MonoBehaviour
         // Vision Data - now with complete info
         public Dictionary<string, VisibleAgentInfo> visibleAgents;
         public int visibleCount;
+        public Dictionary<string, VisibleFoodInfo> visibleFood;
+        public int visibleFoodCount;
 
         // Hearing Data - now with distance
         public Dictionary<string, HeardAgentInfo> heardAgents;
@@ -73,6 +82,12 @@ public class AgentActionManager : MonoBehaviour
         // Disease Timing (new)
         public float incubationPeriod;
         public float contagiousDuration;
+
+        //Hunger
+        public float hunger;
+        
+
+
     }
 
     #endregion
@@ -177,6 +192,18 @@ public class AgentActionManager : MonoBehaviour
             };
         }
 
+        var foodData = visionController.GetFoodWithinSights();
+        Dictionary<string, VisibleFoodInfo> foodInfo = new Dictionary<string, VisibleFoodInfo>();
+
+        foreach (var kvp in foodData)
+        {
+            foodInfo[kvp.Key] = new VisibleFoodInfo
+            {
+                position = kvp.Value.position,
+                distance = kvp.Value.distance
+            };
+        }
+
         return new AgentPerceptionData
         {
             // Identity
@@ -208,7 +235,14 @@ public class AgentActionManager : MonoBehaviour
 
             // Disease Timing
             incubationPeriod = baseAgent.IncubationPeriod,
-            contagiousDuration = baseAgent.ContagiousDuration
+            contagiousDuration = baseAgent.ContagiousDuration,
+
+            //Hunger data
+            hunger = baseAgent.Hunger,
+
+            // Food data
+            visibleFood = foodInfo,
+            visibleFoodCount = foodInfo.Count
         };
     }
 
@@ -235,6 +269,10 @@ public class AgentActionManager : MonoBehaviour
     // ===== Health Wrapper =====
 
     public void ModifyHealth(float amount) => Action.ModifyHealth(amount);
+
+    // ===== Action Wrapper =====
+
+    public ActionController.ActionResult Eat(string foodID) => Action.Eat(foodID);
 
     // ===== Query Properties =====
 

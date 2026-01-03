@@ -7640,6 +7640,56 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 1.1, z: 0.5000002}
   m_Center: {x: 0.0000038146973, y: 0.55, z: -0.00000008940697}
+--- !u!1 &972028144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 972028146}
+  - component: {fileID: 972028145}
+  m_Layer: 0
+  m_Name: FoodSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &972028145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972028144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88269aac9ee63d34a8fe0a81efb09866, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FoodSpawner
+  foodPrefab: {fileID: -2654917831791964392, guid: 888fe2cc155c0df44b795acc9decb739, type: 3}
+  spawnInterval: 3
+  maxFood: 20
+  spawnRadius: 20
+  minSpawnDistance: 2
+  maxSpawnAttempts: 50
+--- !u!4 &972028146
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972028144}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 26, y: 0, z: -23}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &978519249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8451,6 +8501,7 @@ GameObject:
   - component: {fileID: 1071343192}
   - component: {fileID: 1071343191}
   - component: {fileID: 1071343190}
+  - component: {fileID: 1071343195}
   m_Layer: 0
   m_Name: SkellySpawner
   m_TagString: Untagged
@@ -8465,13 +8516,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071343189}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36de0ccafcbfccb45bb84122555e8ea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfectionTestSpawner
   agentPrefabs:
-  - {fileID: 2406477957130087985, guid: 44ce0614ea5b2c344a96df18f4e0d9bf, type: 3}
   - {fileID: 8431285394811662226, guid: c60ccdf93325ae748b541602a6c43023, type: 3}
   agentCount: 30
   spawnAreaRadius: 10
@@ -8567,6 +8617,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1071343195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071343189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123af003a2e47df4e8bda0d722fb15a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleAgentSpawner
+  agentPrefabs:
+  - {fileID: 8431285394811662226, guid: c60ccdf93325ae748b541602a6c43023, type: 3}
+  agentCount: 30
+  spawnRadius: 30
+  minSpawnDistance: 2
+  maxSpawnAttempts: 50
 --- !u!1 &1077916850
 GameObject:
   m_ObjectHideFlags: 0
@@ -9843,6 +9911,7 @@ GameObject:
   - component: {fileID: 1212292340}
   - component: {fileID: 1212292339}
   - component: {fileID: 1212292338}
+  - component: {fileID: 1212292343}
   m_Layer: 0
   m_Name: HumanSpawner
   m_TagString: Untagged
@@ -9857,14 +9926,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1212292337}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36de0ccafcbfccb45bb84122555e8ea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfectionTestSpawner
   agentPrefabs:
   - {fileID: 8875525196518896879, guid: 7a2e3e3535040a943a1d43ac9875bf0f, type: 3}
-  - {fileID: 7500510491458530811, guid: d3fdf38bfd4b4bc43891b2cb35b71a38, type: 3}
   agentCount: 30
   spawnAreaRadius: 10
   minSpawnDistance: 0.5
@@ -9953,12 +10021,30 @@ Transform:
   m_GameObject: {fileID: 1212292337}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 40, y: 0, z: 0}
+  m_LocalPosition: {x: 33, y: 0, z: -24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1212292343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212292337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123af003a2e47df4e8bda0d722fb15a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleAgentSpawner
+  agentPrefabs:
+  - {fileID: 8875525196518896879, guid: 7a2e3e3535040a943a1d43ac9875bf0f, type: 3}
+  agentCount: 30
+  spawnRadius: 30
+  minSpawnDistance: 2
+  maxSpawnAttempts: 50
 --- !u!1 &1213212414 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e7137616f5d8b742afdba009a7ce68d, type: 3}
@@ -12967,6 +13053,53 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1642924935}
   m_SourcePrefab: {fileID: 100100000, guid: c731e776325fe18418d3db66e232974f, type: 3}
+--- !u!1 &1612440079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1612440081}
+  - component: {fileID: 1612440080}
+  m_Layer: 0
+  m_Name: HungerSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1612440080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1612440079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992e677653e270842bac54298349d333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HungerSystem
+  idleDrain: 3
+  walkDrain: 5
+  runDrain: 8
+--- !u!4 &1612440081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1612440079}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1629273055
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16027,3 +16160,5 @@ SceneRoots:
   - {fileID: 1071343194}
   - {fileID: 1715242534}
   - {fileID: 561440002}
+  - {fileID: 1612440081}
+  - {fileID: 972028146}

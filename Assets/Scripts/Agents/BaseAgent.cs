@@ -29,6 +29,8 @@ public class BaseAgent : MonoBehaviour
     [SerializeField] private bool isImmune = false;
     [SerializeField][Range(0f, 100f)] private float health = 100f;
     [SerializeField] private InfectionStage infectionStage = InfectionStage.Healthy;
+    [Header("Hunger")]
+    [SerializeField] private float hunger = 100f;
 
     #endregion serializedVariables
 
@@ -38,6 +40,7 @@ public class BaseAgent : MonoBehaviour
     // Action tracking - allows other agents to see what this agent is doing
     private string currentAction = "none";
     private float actionStartTime = -1f;
+    public float Hunger => hunger;
 
     //public properties for controlled access
     public string AgentName => agentName;
@@ -230,12 +233,25 @@ public class BaseAgent : MonoBehaviour
         Debug.Log($"{instanceID} has recovered from {infectionName} and is now immune!");
     }
 
+    public void ModifyHunger(float amount)
+    {
+        if (currentState == AgentState.Dead) return;
+
+        hunger += amount;
+        hunger = Mathf.Clamp(hunger, 0f, 100f);
+
+        if (hunger <= 0f)
+        {
+            Die();
+        }
+    }
+
     /// <summary>
     /// Called when health reaches 0.
     /// </summary>
     public void Die()
     {
-        if (currentState == AgentState.Dead && infectionStage == InfectionStage.Dead) return;  // Prevent double death
+        if (currentState == AgentState.Dead || infectionStage == InfectionStage.Dead) return;  // Prevent double death
 
         health = 0f;
         infectionStage = InfectionStage.Dead;
@@ -255,6 +271,9 @@ public class BaseAgent : MonoBehaviour
     /// </summary>
     public void SetCurrentAction(string action)
     {
+        //handle dead agents
+        if (currentState == AgentState.Dead) return;
+
         currentAction = action;
         actionStartTime = Time.time;
     }

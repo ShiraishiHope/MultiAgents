@@ -31,6 +31,11 @@ public class VisionController : MonoBehaviour
         public string faction;
         public string state;
     }
+    public struct VisibleFoodData
+    {
+        public Vector3 position;
+        public float distance;
+    }
 
     #endregion Data Structures
 
@@ -121,6 +126,39 @@ public class VisionController : MonoBehaviour
     {
         return GetAgentsWithinSights();
     }
+
+    public Dictionary<string, VisibleFoodData> GetFoodWithinSights()
+    {
+        Dictionary<string, VisibleFoodData> visibleFood = new Dictionary<string, VisibleFoodData>();
+        FoodPlate[] allFood = FoodPlate.GetAllFood();
+
+        foreach (FoodPlate food in allFood)
+        {
+            if (food.IsEmpty)
+                continue;
+
+            Vector3 foodPosition = food.transform.position;
+            float distance = Vector3.Distance(transform.position, foodPosition);
+
+            if (distance <= sightDistance)
+            {
+                Vector3 targetDir = foodPosition - transform.position;
+                float angle = Vector3.Angle(targetDir, transform.forward);
+
+                if (angle <= sightAngle / 2f)
+                {
+                    visibleFood.Add(food.InstanceID, new VisibleFoodData
+                    {
+                        position = foodPosition,
+                        distance = distance
+                    });
+                }
+            }
+        }
+
+        return visibleFood;
+    }
+
     #endregion
     #region Vision Commands
 

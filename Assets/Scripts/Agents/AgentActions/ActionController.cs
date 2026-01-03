@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 /// <summary>
 /// Handles all combat and health-related actions for an agent.
@@ -19,6 +20,7 @@ public class ActionController : MonoBehaviour
     private const float SNEEZE_RADIUS = 3f;
     private const float COUGH_RADIUS = 5f;
     private const float COUGH_ANGLE = 60f;
+    private const float EAT_RANGE = 1.5f;
 
     // Damage constants
     private const float ATTACK_BASE_DAMAGE = 25f;
@@ -59,6 +61,61 @@ public class ActionController : MonoBehaviour
     }
     #endregion
 
+    #region Actions
+
+    public ActionResult Eat(string foodID)
+    {
+        lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
+        baseAgent.SetCurrentAction("eat");
+
+        FoodPlate food = FoodPlate.GetFoodByID(foodID);
+
+        if (food == null)
+        {
+            lastActionResult.failReason = "Food not found";
+            return lastActionResult;
+        }
+
+        float distance = Vector3.Distance(transform.position, food.transform.position);
+        if (distance > EAT_RANGE)
+        {
+            lastActionResult.failReason = $"Food out of range ({distance:F1} > {EAT_RANGE})";
+            return lastActionResult;
+        }
+
+        if (food.IsEmpty)
+        {
+            lastActionResult.failReason = "Food already empty";
+            return lastActionResult;
+        }
+
+        int countBefore = food.FoodCount;
+        bool consumed = food.Consume();
+
+        if (!consumed)
+        {
+            lastActionResult.failReason = "Failed to consume";
+            return lastActionResult;
+        }
+
+        float hungerGain = (countBefore == 2) ? 50f : 25f;
+        baseAgent.ModifyHunger(hungerGain);
+
+        lastActionResult.success = true;
+        Debug.Log($"{baseAgent.InstanceID} ate from {foodID}, gained {hungerGain} hunger");
+        return lastActionResult;
+    }
+
+    #endregion Actions
+
     #region Direct Attack Actions
 
     /// <summary>
@@ -67,6 +124,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Attack(string targetID)
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("attack");
 
         BaseAgent target = ValidateTarget(targetID, ATTACK_RANGE);
@@ -91,6 +156,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Claw(string targetID)
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("claw");
 
         BaseAgent target = ValidateTarget(targetID, CLAW_RANGE);
@@ -121,6 +194,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Bite(string targetID)
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("bite");
 
         BaseAgent target = ValidateTarget(targetID, BITE_RANGE);
@@ -152,6 +233,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Kill(string targetID)
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("kill");
 
         // Look up target - no range check for kill (assume already validated proximity)
@@ -184,6 +273,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Sneeze()
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("sneeze");
 
         // Must be contagious to spread via sneeze
@@ -219,6 +316,14 @@ public class ActionController : MonoBehaviour
     public ActionResult Cough()
     {
         lastActionResult = new ActionResult();
+
+        // Skip dead agents - they don't need decisions
+        if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
+        {
+            lastActionResult.failReason = "Agent is dead";
+            return lastActionResult;
+        }
+
         baseAgent.SetCurrentAction("cough");
 
         // Must be contagious to spread via cough

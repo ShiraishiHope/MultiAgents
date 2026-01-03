@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d108cac1632272d49ae1b7e134d3d11c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PredatorPreySpawner
-  totalAgents: 200
+  totalAgents: 100
   predatorRatio: 0.3
   predatorPrefab: {fileID: -4812724086778220992, guid: 8741cd6c8b9fc3947999191d0c381f50, type: 3}
   preyPrefab: {fileID: 4395860408063735346, guid: 4ecab060b0afb5d4db61f7f1311b9e24, type: 3}

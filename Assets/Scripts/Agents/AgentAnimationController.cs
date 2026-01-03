@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AgentAnimationController : MonoBehaviour
 {
@@ -18,6 +18,15 @@ public class AgentAnimationController : MonoBehaviour
     void Update()
     {
         if (baseAgent.CurrentState == lastState) return;
+
+        // Log EVERY state change the animator sees
+        Debug.Log($"[ANIM] {baseAgent.InstanceID}: {lastState} → {baseAgent.CurrentState}");
+
+        // Extra logging for dead agents
+        if (lastState == BaseAgent.AgentState.Dead)
+        {
+            Debug.LogError($"[ANIM ZOMBIE] {baseAgent.InstanceID} was Dead, now showing as {baseAgent.CurrentState}!");
+        }
 
         lastState = baseAgent.CurrentState;
 
