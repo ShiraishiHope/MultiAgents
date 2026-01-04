@@ -134,6 +134,7 @@ public class PythonBehaviorController : MonoBehaviour
 
     void Start()
     {
+
         // Skip if no script name provided
         if (string.IsNullOrEmpty(pythonScriptName))
         {
@@ -698,6 +699,8 @@ public class PythonBehaviorController : MonoBehaviour
                 using (PyObject agentDecision = resultsDict[agentKey])
                 {
                     AgentDecisionData decision = ParseDecisionResponse(agentDecision);
+                    Debug.Log($"[Agent {agentID}] Action: {decision.action.actionType} | Move: {decision.movement.movementType} | Target: {decision.action.targetID}");
+
                     controller.currentTargetID = decision.action.targetID ?? "0";
                     ExecuteDecision(controller.actionManager, decision);
                 }
@@ -725,6 +728,8 @@ public class PythonBehaviorController : MonoBehaviour
                 parameters = new Dictionary<string, object>()
             }
         };
+
+        Console.WriteLine(decision.movement.ToString());
 
         try
         {
