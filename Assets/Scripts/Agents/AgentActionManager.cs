@@ -86,8 +86,9 @@ public class AgentActionManager : MonoBehaviour
 
         //Hunger
         public float hunger;
-        
 
+        //Robot
+        public bool isCarrying;
 
     }
 
@@ -234,7 +235,7 @@ public class AgentActionManager : MonoBehaviour
             health = baseAgent.Health,
             infectionStage = (int)baseAgent.CurrentInfectionStage,
             infectivity = baseAgent.Infectivity,
-
+            isCarrying = baseAgent.IsCarrying,
             // Disease Timing
             incubationPeriod = baseAgent.IncubationPeriod,
             contagiousDuration = baseAgent.ContagiousDuration,
@@ -275,6 +276,12 @@ public class AgentActionManager : MonoBehaviour
     // ===== Action Wrapper =====
 
     public ActionController.ActionResult Eat(string foodID) => Action.Eat(foodID);
+    
+    // ===== Robot Actions Wrappers =====
+
+    public ActionController.ActionResult PickUp(string itemID) => Action.PickUp(itemID);
+
+    public ActionController.ActionResult DropOff() => Action.DropOff();
 
     // ===== Query Properties =====
 

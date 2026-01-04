@@ -609,11 +609,11 @@ public class PythonBehaviorController : MonoBehaviour
         // ----- ROBOT-SPECIFIC DATA -----
 
         // Spawn position (for returning home)
-        SetFloat(perception, "spawn_x", data.mySpawn.x); 
-        SetFloat(perception, "spawn_z", data.mySpawn.z); 
+        SetFloat(perception, "spawn_x", data.mySpawn.x);
+        SetFloat(perception, "spawn_z", data.mySpawn.z);
 
         // Carrying state
-        SetInt(perception, "is_carrying", HasItemAttached() ? 1 : 0);
+        SetInt(perception, "is_carrying", data.isCarrying ? 1 : 0);
 
         // Current target (for reservation system)
         SetString(perception, "current_target_id", currentTargetID);
@@ -868,13 +868,13 @@ public class PythonBehaviorController : MonoBehaviour
                 Debug.LogWarning($"Unknown action type: {action.actionType}");
                 break;
 
-            // Robot
+            // Robot Actions
             case "pick_up":
-                ExecutePickUp(actionManager);
+                actionManager.PickUp(action.targetID);
                 break;
 
             case "drop_off":
-                ExecuteDropOff(actionManager);
+                actionManager.DropOff();
                 break;
         }
     }
@@ -939,13 +939,13 @@ public class PythonBehaviorController : MonoBehaviour
     /// </summary>
     private GameObject FindNearestWithTag(string tag, float radius)
     {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Item");
         GameObject nearest = null;
         float minDist = radius;
 
         foreach (GameObject obj in objects)
         {
-            float dist = Vector3.Distance(transform.position, obj.transform.position);
+            float dist = Vector3.Distance(this.transform.position, obj.transform.position);
             if (dist < minDist)
             {
                 nearest = obj;
@@ -954,41 +954,6 @@ public class PythonBehaviorController : MonoBehaviour
         }
         return nearest;
     }
-
-    private void ExecutePickUp(AgentActionManager actionManager)
-    {
-        if (HasItemAttached()) return; // Already carrying
-
-        GameObject nearestItem = FindNearestWithTag("Item", 1.5f);
-        if (nearestItem != null)
-        {
-            // Attach item to robot
-            nearestItem.transform.SetParent(this.transform);
-            nearestItem.transform.localPosition = new Vector3(0, 0.5f, 0); // On top of robot
-            Debug.Log($"{baseAgent.InstanceID} picked up item");
-        }
-    }
-
-    private void ExecuteDropOff(AgentActionManager actionManager)
-    {
-        Transform carriedItem = GetAttachedItem();
-        if (carriedItem == null) return; // Not carrying anything
-
-        // Detach and place on ground
-        carriedItem.SetParent(null);
-        carriedItem.position = new Vector3(
-            carriedItem.position.x,
-            0f,  // Ground level
-            carriedItem.position.z
-        );
-
-        // Optional: Change tag so it's no longer pickable
-        carriedItem.gameObject.tag = "Untagged";
-
-        Debug.Log($"{baseAgent.InstanceID} dropped off item");
-    }
-
-
 
     #endregion
 }

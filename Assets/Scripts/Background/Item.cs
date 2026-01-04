@@ -135,7 +135,6 @@ public class Item : MonoBehaviour
     /// </summary>
     public void CompleteDelivery()
     {
-        Debug.Log($"[Item] {instanceID} delivered successfully!");
         Destroy(gameObject);
     }
 

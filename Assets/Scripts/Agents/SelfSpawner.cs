@@ -3,51 +3,49 @@ using UnityEngine;
 public class ShelfSpawner : MonoBehaviour
 {
     public GameObject itemPrefab;
-    public float spawnInterval = 20f; // Temps de base (20s)
-    public float timeVariation = 5f;  // Variation de +/- 5s pour le réalisme
-    public Vector3 offset = new (0, 0.2f, 0);
+    public float spawnInterval = 20f;
+    public float timeVariation = 5f;
+    public Vector3 offset = new(0, 0.2f, 0);
 
-    private float nextSpawnTime;
-
-    void Start()
-    {
-        // On définit le premier moment d'apparition au hasard
-        SetNextSpawnTime();
-    }
+    private float nextSpawnTime = -1f; // -1 indique qu'aucun chrono n'est en cours
+    private GameObject currentItem;     // Référence à l'item actuellement sur l'étagère
 
     void Update()
     {
-        // Si le temps actuel dépasse le moment prévu pour le spawn
-        if (Time.time >= nextSpawnTime)
+        // 1. Vérifier si l'étagère est devenue vide
+        if (currentItem == null || currentItem.transform.parent != null)
         {
-            if (!IsOccupied())
+            // Si l'étagère vient de se vider et qu'aucun chrono n'est lancé
+            if (nextSpawnTime < 0)
             {
-                SpawnItem();
+                SetNextSpawnTime();
             }
-            // On calcule le prochain moment d'apparition
-            SetNextSpawnTime();
+        }
+
+        // 2. Si un chrono est en cours et que le temps est écoulé
+        if (nextSpawnTime > 0 && Time.time >= nextSpawnTime)
+        {
+            SpawnItem();
+            nextSpawnTime = -1f; // On stoppe le chrono car l'item est présent
         }
     }
 
     void SetNextSpawnTime()
     {
-        // Calcule un intervalle entre 15s (20-5) et 25s (20+5)
         float randomDelay = Random.Range(spawnInterval - timeVariation, spawnInterval + timeVariation);
         nextSpawnTime = Time.time + randomDelay;
     }
 
     void SpawnItem()
     {
-        Instantiate(itemPrefab, transform.position + offset, Quaternion.identity);
-    }
+        currentItem = Instantiate(itemPrefab, transform.position + offset, Quaternion.identity);
+        currentItem.tag = "Item"; // Requis pour la détection de proximité du robot
 
-    bool IsOccupied()
-    {
-        Collider[] colliders = Physics.OverlapSphere(transform.position + offset, 1f);
-        foreach (var col in colliders)
+        // S'assure que le script Item est présent pour le registre Python
+        if (currentItem.GetComponent<Item>() == null)
         {
-            if (col.CompareTag("Item")) return true;
+            currentItem.AddComponent<Item>();
         }
-        return false;
+
     }
 }

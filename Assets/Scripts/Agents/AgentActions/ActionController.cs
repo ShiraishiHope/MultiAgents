@@ -21,6 +21,7 @@ public class ActionController : MonoBehaviour
     private const float COUGH_RADIUS = 5f;
     private const float COUGH_ANGLE = 60f;
     private const float EAT_RANGE = 1.5f;
+    private const float PICKUP_RANGE = 1.5f;
 
     // Damage constants
     private const float ATTACK_BASE_DAMAGE = 25f;
@@ -519,5 +520,85 @@ public class ActionController : MonoBehaviour
 
         return result;
     }
+    #endregion
+
+    #region Robot Actions
+
+    /// <summary>
+    /// Tente de ramasser l'item spécifié.
+    /// L'item doit être à portée.
+    /// </summary>
+    public ActionResult PickUp(string itemID)
+    {
+        lastActionResult = new ActionResult();
+
+        // 2. Recherche de l'objet dans le registre
+        Item item = Item.GetItemByID(itemID);
+        if (item == null)
+        {
+            lastActionResult.failReason = "Item not found";
+            return lastActionResult;
+        }
+
+        // 3. Vérification de la distance
+        float distance = Vector3.Distance(transform.position, item.Position);
+        if (distance > PICKUP_RANGE)
+        {
+            lastActionResult.failReason = $"Item out of range ({distance:F1} > {EAT_RANGE})";
+            return lastActionResult;
+        }
+
+        // 4. Vérification si l'objet est déjà porté par quelqu'un d'autre
+        if (item.IsBeingCarried)
+        {
+            lastActionResult.failReason = "Item already being carried";
+            return lastActionResult;
+        }
+
+        // 5. Exécution du ramassage
+        item.OnPickedUp(); // Change l'état interne de l'item
+
+        // Attachement physique (devient enfant du robot)
+        item.transform.SetParent(this.transform);
+        item.transform.localPosition = new Vector3(0, 0.5f, 0); // Positionné sur le dessus
+
+        baseAgent.SetIsCarrying(true);
+        baseAgent.SetCurrentAction("pick_up");
+        lastActionResult.success = true;
+
+        Debug.Log($"{baseAgent.InstanceID} picked up {itemID}");
+        return lastActionResult;
+    }
+
+    /// <summary>
+    /// Dépose l'objet actuellement porté au sol ou le livre s'il est dans une zone.
+    /// </summary>
+    public ActionResult DropOff()
+    {
+        lastActionResult = new ActionResult();
+
+        // 1. Trouver l'item porté parmi les enfants
+        Item carriedItem = GetComponentInChildren<Item>();
+
+        if (carriedItem == null)
+        {
+            lastActionResult.failReason = "No item being carried";
+            return lastActionResult;
+        }
+
+        // 2. Détachement physique
+        carriedItem.transform.SetParent(null);
+        carriedItem.transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+
+        carriedItem.CompleteDelivery();
+
+        baseAgent.SetCurrentAction("drop_off");
+        baseAgent.SetIsCarrying(false);
+        lastActionResult.success = true;
+
+        Debug.Log($"{baseAgent.InstanceID} dropped off an item");
+        return lastActionResult;
+    }
+
     #endregion
 }

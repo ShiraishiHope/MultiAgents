@@ -31,6 +31,7 @@ public class BaseAgent : MonoBehaviour
     [SerializeField] private InfectionStage infectionStage = InfectionStage.Healthy;
     [Header("Hunger")]
     [SerializeField] private float hunger = 100f;
+    [SerializeField] private bool isCarrying = false;
 
     #endregion serializedVariables
 
@@ -84,6 +85,7 @@ public class BaseAgent : MonoBehaviour
     public float Infectivity => infectivity;
     public float IncubationPeriod => incubationPeriod;
     public float ContagiousDuration => contagiousDuration;
+    public bool IsCarrying => isCarrying;
 
 
     public enum InfectionStage
@@ -279,6 +281,15 @@ public class BaseAgent : MonoBehaviour
 
         currentAction = action;
         actionStartTime = Time.time;
+    }
+
+    /// <summary>
+    /// Met à jour l'état de transport de l'agent (si le robot porte un objet).
+    /// </summary>
+    /// <param name="carrying">True si l'agent porte un objet, false sinon.</param>
+    public void SetIsCarrying(bool carrying)
+    {
+        isCarrying = carrying;
     }
 
     #endregion Action Tracking
