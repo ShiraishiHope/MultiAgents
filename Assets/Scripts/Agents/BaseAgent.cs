@@ -56,10 +56,13 @@ public class BaseAgent : MonoBehaviour
     AgentState currentState = AgentState.Idle;
     public string CurrentAction => currentAction;
     public float ActionStartTime => actionStartTime;
-
+    private Vector3 spawnPosition;
+    public Vector3 SpawnPosition => spawnPosition;
 
     //Enum of different possibles
-    public enum CharacterType { Barbarian, Knight, Mage, Rogue, Skeleton_Mage, Skeleton_Minion, Skeleton_Rogue, Skeleton_Warrior }
+    public enum CharacterType { Barbarian, Knight, Mage, Rogue, Skeleton_Mage, Skeleton_Minion, Skeleton_Rogue, Skeleton_Warrior,
+        Robot
+    }
     public enum FactionType
     {
         Human,
@@ -300,6 +303,7 @@ public class BaseAgent : MonoBehaviour
         if (!agentRegistry.ContainsKey(instanceID))
         {
             agentRegistry[instanceID] = this;
+            spawnPosition = transform.position;
         }
         else
         {

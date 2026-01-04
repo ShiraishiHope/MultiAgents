@@ -57,6 +57,7 @@ public class AgentActionManager : MonoBehaviour
         public string myFaction;
         public string myInstanceID;
         public string myState;
+        public Vector3 mySpawn;
 
         // Vision Data - now with complete info
         public Dictionary<string, VisibleAgentInfo> visibleAgents;
@@ -213,6 +214,7 @@ public class AgentActionManager : MonoBehaviour
             myFaction = baseAgent.Faction.ToString(),
             myInstanceID = baseAgent.InstanceID,
             myState = baseAgent.CurrentState.ToString(),
+            mySpawn = baseAgent.SpawnPosition,
 
             // Vision - complete data
             visibleAgents = visibleInfo,

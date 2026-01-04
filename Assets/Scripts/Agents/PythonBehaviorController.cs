@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Controls Python-based agent behavior using batch processing.
@@ -25,6 +26,7 @@ public class PythonBehaviorController : MonoBehaviour
     #region Instance References
     private AgentActionManager actionManager;
     private BaseAgent baseAgent;
+
     #endregion
 
     #region Static Batch Management
@@ -35,6 +37,8 @@ public class PythonBehaviorController : MonoBehaviour
     private static PyObject pythonModule;
     private static float nextDecisionTime;
     private static string currentScriptName;
+    private string currentTargetID = "0";
+    public string CurrentTargetID => currentTargetID;
 
     // Registry of all active agents
     private static Dictionary<string, PythonBehaviorController> registeredAgents =
@@ -79,7 +83,9 @@ public class PythonBehaviorController : MonoBehaviour
         "x", "z", "distance", "current_action", "action_start_time",
         "faction", "state", "movement", "action", "type", "target_x",
         "target_z", "target_id", "parameters",
-        "hunger","visible_food", "visible_food_count"
+        "hunger","visible_food", "visible_food_count",
+        "items", "deposites", "obstacles", "radius", "id", "is_carrying", "current_target_id",
+        "spawn_x", "spawn_z"
     };
 
         foreach (string key in commonKeys)
@@ -429,9 +435,13 @@ public class PythonBehaviorController : MonoBehaviour
 
                 using (PyFloat x = new PyFloat(pos.x))
                 using (PyFloat z = new PyFloat(pos.z))
+                using (PyString targetId = new PyString(controller.currentTargetID ?? "0"))
+                using (PyInt isCarrying = new PyInt(controller.HasItemAttached() ? 1 : 0))
                 {
                     posDict[GetCachedKey("x")] = x;
                     posDict[GetCachedKey("z")] = z;
+                    posDict[GetCachedKey("current_target_id")] = targetId;
+                    posDict[GetCachedKey("is_carrying")] = isCarrying;
                 }
 
                 allAgentsDict[agentKey] = posDict;
@@ -595,6 +605,72 @@ public class PythonBehaviorController : MonoBehaviour
         }
         SetInt(perception, "visible_food_count", data.visibleFoodCount);
 
+        // ----- ROBOT-SPECIFIC DATA -----
+
+        // Spawn position (for returning home)
+        SetFloat(perception, "spawn_x", data.mySpawn.x); 
+        SetFloat(perception, "spawn_z", data.mySpawn.z); 
+
+        // Carrying state
+        SetInt(perception, "is_carrying", HasItemAttached() ? 1 : 0);
+
+        // Current target (for reservation system)
+        SetString(perception, "current_target_id", currentTargetID);
+
+        // ----- ITEMS (for robots) -----
+        using (PyList itemList = new PyList())
+        {
+            Item[] allItems = Item.GetAllItems();  // Uses your Item registry
+            foreach (Item item in allItems)
+            {
+                if (item.IsBeingCarried) continue;  // Skip items already picked up
+
+                using (PyString itemKey = new PyString(item.InstanceID))
+                using (PyDict itemData = new PyDict())
+                {
+                    SetFloat(itemData, "x", item.Position.x);
+                    SetFloat(itemData, "z", item.Position.z);
+                    SetString(itemData, "id", item.InstanceID);
+                    itemList.Append(itemData);
+                }
+            }
+            perception[GetCachedKey("items")] = itemList;
+        }
+
+        // ----- DEPOSITS (for robots) -----
+        using (PyList depositList = new PyList())
+        {
+            DepositZone[] allDeposits = DepositZone.GetAllDeposits();
+            foreach (DepositZone deposit in allDeposits)
+            {
+                using (PyDict depositData = new PyDict())
+                {
+                    SetFloat(depositData, "x", deposit.Position.x);
+                    SetFloat(depositData, "z", deposit.Position.z);
+                    SetString(depositData, "id", deposit.InstanceID);
+                    depositList.Append(depositData);
+                }
+            }
+            perception[GetCachedKey("deposites")] = depositList;  // Note: matches robot.py spelling
+        }
+
+        // ----- OBSTACLES (for robots) -----
+        using (PyList obstacleList = new PyList())
+        {
+            Obstacle[] allObstacles = Obstacle.GetAllObstacles();
+            foreach (Obstacle obs in allObstacles)
+            {
+                using (PyDict obsData = new PyDict())
+                {
+                    SetFloat(obsData, "x", obs.Position.x);
+                    SetFloat(obsData, "z", obs.Position.z);
+                    SetFloat(obsData, "radius", obs.AvoidanceRadius);
+                    obstacleList.Append(obsData);
+                }
+            }
+            perception[GetCachedKey("obstacles")] = obstacleList;
+        }
+
         return perception;
     }
 
@@ -622,6 +698,7 @@ public class PythonBehaviorController : MonoBehaviour
                 using (PyObject agentDecision = resultsDict[agentKey])
                 {
                     AgentDecisionData decision = ParseDecisionResponse(agentDecision);
+                    controller.currentTargetID = decision.action.targetID ?? "0";
                     ExecuteDecision(controller.actionManager, decision);
                 }
             }
@@ -785,6 +862,15 @@ public class PythonBehaviorController : MonoBehaviour
             default:
                 Debug.LogWarning($"Unknown action type: {action.actionType}");
                 break;
+
+            // Robot
+            case "pick_up":
+                ExecutePickUp(actionManager);
+                break;
+
+            case "drop_off":
+                ExecuteDropOff(actionManager);
+                break;
         }
     }
 
@@ -819,5 +905,85 @@ public class PythonBehaviorController : MonoBehaviour
     /// Returns whether this instance is the batch master.
     /// </summary>
     public bool IsBatchMaster => batchMaster == this;
+    #endregion
+
+    #region Robot Item Handling
+
+    /// <summary>
+    /// Checks if this robot has an item attached as a child object.
+    /// </summary>
+    private bool HasItemAttached()
+    {
+        return GetAttachedItem() != null;
+    }
+
+    /// <summary>
+    /// Gets the Transform of the item being carried (if any).
+    /// </summary>
+    private Transform GetAttachedItem()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.CompareTag("Item")) return child;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Finds the nearest GameObject with a specific tag within radius.
+    /// </summary>
+    private GameObject FindNearestWithTag(string tag, float radius)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
+        GameObject nearest = null;
+        float minDist = radius;
+
+        foreach (GameObject obj in objects)
+        {
+            float dist = Vector3.Distance(transform.position, obj.transform.position);
+            if (dist < minDist)
+            {
+                nearest = obj;
+                minDist = dist;
+            }
+        }
+        return nearest;
+    }
+
+    private void ExecutePickUp(AgentActionManager actionManager)
+    {
+        if (HasItemAttached()) return; // Already carrying
+
+        GameObject nearestItem = FindNearestWithTag("Item", 1.5f);
+        if (nearestItem != null)
+        {
+            // Attach item to robot
+            nearestItem.transform.SetParent(this.transform);
+            nearestItem.transform.localPosition = new Vector3(0, 0.5f, 0); // On top of robot
+            Debug.Log($"{baseAgent.InstanceID} picked up item");
+        }
+    }
+
+    private void ExecuteDropOff(AgentActionManager actionManager)
+    {
+        Transform carriedItem = GetAttachedItem();
+        if (carriedItem == null) return; // Not carrying anything
+
+        // Detach and place on ground
+        carriedItem.SetParent(null);
+        carriedItem.position = new Vector3(
+            carriedItem.position.x,
+            0f,  // Ground level
+            carriedItem.position.z
+        );
+
+        // Optional: Change tag so it's no longer pickable
+        carriedItem.gameObject.tag = "Untagged";
+
+        Debug.Log($"{baseAgent.InstanceID} dropped off item");
+    }
+
+
+
     #endregion
 }

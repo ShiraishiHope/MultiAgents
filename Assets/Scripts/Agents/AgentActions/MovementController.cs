@@ -55,6 +55,8 @@ public class MovementController : MonoBehaviour
     #region Unity Lifecycle
     void Update()
     {
+        if (baseAgent == null) return;
+
         //Handle dead agents
         if (baseAgent.CurrentState == BaseAgent.AgentState.Dead)
         {
