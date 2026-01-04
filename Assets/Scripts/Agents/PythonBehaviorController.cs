@@ -67,7 +67,7 @@ public class PythonBehaviorController : MonoBehaviour
             InitializePython();
             pythonInitialized = true;
         }
-    }
+    } 
 
     void Start()
     {

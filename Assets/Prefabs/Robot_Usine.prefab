@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonBehaviorController
   pythonScriptName: robot
-  decisionInterval: 0.1
+  decisionInterval: 0.3
 --- !u!114 &7525930326550077079
 MonoBehaviour:
   m_ObjectHideFlags: 0
