@@ -70,22 +70,20 @@ def decide_action(perception):
     elif not carrying_item:
 
         # 1️⃣ Garder la cible actuelle si elle existe encore
-        current_target_item = next(
-            (item for item in visible_items if str(item['id']) == current_target_id),
-            None
-        )
+        if current_target_id == '0':
 
-        if current_target_item and current_target_id not in reserved_items:
-            target_id = current_target_id
-            target_pos_x = current_target_item['x']
-            target_pos_z = current_target_item['z']
-
-        else:
             # 2️⃣ Sélection polie d’un nouvel item
             candidate_items = [
                 item for item in visible_items
                 if str(item['id']) not in reserved_items
             ]
+
+            available_other_robots_without_target = {
+                other_robot_id: other_robot_data
+                for other_robot_id, other_robot_data in all_robots.items()
+                if other_robot_id != robot_id
+                and other_robot_data.get('current_target_id','0') == '0' and not other_robot_data.get('is_carrying')}
+
 
             candidate_items.sort(
                 key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
@@ -95,7 +93,7 @@ def decide_action(perception):
                 my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
                 better_robot_found = False
 
-                for other_robot_id, other_robot in all_robots.items():
+                for other_robot_id, other_robot in available_other_robots_without_target.items():
                     if str(other_robot_id) == robot_id:
                         continue
 
@@ -119,6 +117,10 @@ def decide_action(perception):
                     target_pos_x = item['x']
                     target_pos_z = item['z']
                     break
+        else :
+            target_id = current_target_id
+            target_pos_x = item[f'{current_target_id}'].get('x')
+            target_pos_z = item[f'{current_target_id}'].get('z')
 
     # =============================
     # ACTIONS
@@ -165,3 +167,20 @@ def decide_action(perception):
             "target_id": target_id
         }
     }
+# ========================= 
+# ===== BATCH WRAPPER ===== 
+# ========================= 
+def decide_all(all_perceptions): 
+    """ Called by Unity once per decision cycle with ALL agents' perception data. Wraps the existing decide_action function for batch compatibility. """ 
+
+    all_decisions = {} 
+    for agent_id, perception in all_perceptions.items(): 
+        try: 
+            decision = decide_action(perception) 
+            all_decisions[agent_id] = decision 
+        except Exception as e: 
+            UnityEngine.Debug.LogError(f"Error processing {agent_id}: {e}") 
+            # Return safe default on error 
+            all_decisions[agent_id] = { "movement": { "type": "stop", "target_x": 0.0, "target_z": 0.0 }, "action": { "type": "none", "target_id": "0" } } 
+            
+    return all_decisions

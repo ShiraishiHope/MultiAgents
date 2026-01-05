@@ -1428,7 +1428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &324225267
@@ -1570,7 +1570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &378820795
@@ -3446,7 +3446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &806474591
@@ -4153,7 +4153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1 &1006105173 stripped
@@ -4302,7 +4302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!4 &1075469404 stripped
@@ -5482,7 +5482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &1562505562
@@ -6102,7 +6102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!4 &1762058893 stripped
@@ -6303,7 +6303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &1849151795
@@ -7037,7 +7037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &1935791223
@@ -7265,7 +7265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShelfSpawner
   itemPrefab: {fileID: 6158657665779114166, guid: c009040342a3cb44594cbbd69e1f63da, type: 3}
-  spawnInterval: 5
+  spawnInterval: 1
   timeVariation: 1
   offset: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &1998577331
