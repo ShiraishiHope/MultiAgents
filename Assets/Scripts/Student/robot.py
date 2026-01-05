@@ -15,6 +15,13 @@ def near_item(robot_x, robot_z, items, threshold=1.0):
 def near_delivery(robot_x, robot_z, delivery_x, delivery_z, threshold=3): 
     return math.hypot(delivery_x - robot_x, delivery_z - robot_z) < threshold
 
+def get_id_int(robot_id_str):
+    try:
+        # On enlève "Robot_" et on transforme ce qui reste en entier
+        return int(str(robot_id_str).replace("Robot_", ""))
+    except ValueError:
+        return 999999
+
 # -----------------------------
 # Fonction principale
 # -----------------------------
@@ -41,9 +48,11 @@ def decide_action(perception):
     # -----------------------------
     # RÉCUPÉRATION DES DONNÉES
     # -----------------------------
+    
     obstacles = perception.get('obstacles', [])
     current_target_id = str(perception.get('current_target_id', "0"))
 
+    target_id = "0"
     target_pos_x = spawn_x
     target_pos_z = spawn_z
 
@@ -79,56 +88,65 @@ def decide_action(perception):
     # MODE : JE CHERCHE UN ITEM
     # =============================
     elif not carrying_item:
-
         if current_target_id != "0":
             item = visible_items_by_id[current_target_id]
             dist = math.hypot(item['x'] - robot_x, item['z'] - robot_z)
             target_id = current_target_id
             target_pos_x = item['x']
             target_pos_z = item['z']
+        
+        # 2️ SÉLECTION POLIE D'UNE NOUVELLE CIBLE
+        available_other_robots_without_target = {
+            other_robot_id: other_robot_data
+            for other_robot_id, other_robot_data in all_robots.items()
+            if other_robot_id != robot_id
+            and other_robot_data.get('current_target_id', '0') == '0'
+            and not other_robot_data.get('is_carrying')
+        }
+            
+        available_items.sort(
+            key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
+        )
+            
+        for item in available_items:
+            my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
+                
+            # Trouver le robot le plus proche de cet item (parmi ceux disponibles)
+            closest_robot_id = robot_id
+            closest_distance_sq = my_distance_sq
+                
+            for other_robot_id, other_robot in available_other_robots_without_target.items():
+                other_distance_sq = (
+                    (item['x'] - other_robot.get('x')) ** 2 +
+                    (item['z'] - other_robot.get('z')) ** 2
+                )
+                    
+                # 1. Calcul de la différence de distance
+                is_significantly_closer = other_distance_sq < closest_distance_sq
 
-        # 2️ SÉLECTION POLIE D’UNE NOUVELLE CIBLE
-        if current_target_id == "0":
+                # 2. Vérification de l'égalité (tolérance aux erreurs de flottants)
+                is_effectively_equal = math.isclose(
+                    other_distance_sq, 
+                    closest_distance_sq, 
+                    rel_tol=0.1
+                )
+            
+                # 3. Comparaison des IDs en cas d'égalité (Priorité sociale)
+                has_priority_id = str(other_robot_id) < closest_robot_id
+                UnityEngine.Debug.Log(f'{other_robot_id}{closest_robot_id}')
 
-            available_other_robots_without_target = {
-                other_robot_id: other_robot_data
-                for other_robot_id, other_robot_data in all_robots.items()
-                if other_robot_id != robot_id
-                and other_robot_data.get('current_target_id', '0') == '0'
-                and not other_robot_data.get('is_carrying')
-            }
+                # 4. Application de la décision
+                if is_significantly_closer or (is_effectively_equal and has_priority_id):
+                    closest_robot_id = str(other_robot_id)
+                    closest_distance_sq = other_distance_sq
+                
+            # Si je suis le robot le plus proche (avec l'ID le plus bas en cas d'égalité)
+            if closest_robot_id == robot_id:
+                target_id = str(item['id'])
+                target_pos_x = item['x']
+                target_pos_z = item['z']
+                break
 
-            available_items.sort(
-                key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
-            )
-
-            for item in available_items:
-                my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
-                better_robot_found = False
-
-                for other_robot_id, other_robot in available_other_robots_without_target.items():
-                    other_distance_sq = (
-                        (item['x'] - other_robot.get('x')) ** 2 +
-                        (item['z'] - other_robot.get('z')) ** 2
-                    )
-                    UnityEngine.Debug.Log(other_distance_sq)
-                    if (
-                        other_distance_sq < my_distance_sq or
-                        (
-                            math.isclose(other_distance_sq, my_distance_sq, rel_tol=0.01)
-                            and str(other_robot_id) < robot_id
-                        )
-                    ):
-                        better_robot_found = True
-                        break
-
-                if not better_robot_found and current_target_id != '0':
-                    current_target_id = str(item['id'])
-                    target_pos_x = item['x']
-                    target_pos_z = item['z']
-                    break
-
-    target_id = current_target_id
     # =============================
     # ACTIONS
     # =============================
