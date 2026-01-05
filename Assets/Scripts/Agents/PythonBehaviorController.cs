@@ -929,7 +929,7 @@ public class PythonBehaviorController : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            if (child.CompareTag("Item")) return child;
+            if (child.GetComponent<Item>() != null) return child;
         }
         return null;
     }

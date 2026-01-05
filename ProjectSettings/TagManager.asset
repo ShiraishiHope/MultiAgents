@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - QuarantineTent
+  - Obstacle
+  - Deposite
+  - Shelves
   layers:
   - Default
   - TransparentFX
