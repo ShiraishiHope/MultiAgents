@@ -38,22 +38,31 @@ def decide_action(perception):
 
     delivery_zones = perception.get('deposites', [])
     all_robots = perception.get('all_agents', {})
+    # -----------------------------
+    # RÉCUPÉRATION DES DONNÉES
+    # -----------------------------
     obstacles = perception.get('obstacles', [])
     current_target_id = str(perception.get('current_target_id', "0"))
 
-    target_id = "0"
     target_pos_x = spawn_x
     target_pos_z = spawn_z
 
-    # -----------------------------
-    # RÉSERVATIONS DES AUTRES ROBOTS
-    # -----------------------------
+    # =============================
+    # 1. ANALYSE DES RÉSERVATIONS
+    # =============================
+    # On liste les IDs des items déjà ciblés par les autres robots
     reserved_items = {
         str(robot_data.get('current_target_id'))
         for other_robot_id, robot_data in all_robots.items()
         if str(other_robot_id) != robot_id
         and str(robot_data.get('current_target_id', "0")) != "0"
     }
+
+    # On crée la liste des items disponibles (ceux qui ne sont pas réservés)
+    available_items = [
+        item for item in visible_items 
+        if str(item['id']) not in reserved_items
+    ]
 
     # =============================
     # MODE : JE TRANSPORTE → DÉPÔT
@@ -71,27 +80,15 @@ def decide_action(perception):
     # =============================
     elif not carrying_item:
 
-        # 1 VERROUILLAGE DE LA CIBLE EXISTANTE
-        LOCK_DISTANCE = 6.0
-
-        if current_target_id != "0" and current_target_id in visible_items_by_id:
+        if current_target_id != "0":
             item = visible_items_by_id[current_target_id]
             dist = math.hypot(item['x'] - robot_x, item['z'] - robot_z)
-
-            if dist < LOCK_DISTANCE:
-                target_id = current_target_id
-                target_pos_x = item['x']
-                target_pos_z = item['z']
-            else:
-                current_target_id = "0"
+            target_id = current_target_id
+            target_pos_x = item['x']
+            target_pos_z = item['z']
 
         # 2️ SÉLECTION POLIE D’UNE NOUVELLE CIBLE
         if current_target_id == "0":
-
-            candidate_items = [
-                item for item in visible_items
-                if str(item['id']) not in reserved_items
-            ]
 
             available_other_robots_without_target = {
                 other_robot_id: other_robot_data
@@ -101,20 +98,20 @@ def decide_action(perception):
                 and not other_robot_data.get('is_carrying')
             }
 
-            candidate_items.sort(
+            available_items.sort(
                 key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
             )
 
-            for item in candidate_items:
+            for item in available_items:
                 my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
                 better_robot_found = False
 
                 for other_robot_id, other_robot in available_other_robots_without_target.items():
                     other_distance_sq = (
-                        (item['x'] - other_robot['x']) ** 2 +
-                        (item['z'] - other_robot['z']) ** 2
+                        (item['x'] - other_robot.get('x')) ** 2 +
+                        (item['z'] - other_robot.get('z')) ** 2
                     )
-
+                    UnityEngine.Debug.Log(other_distance_sq)
                     if (
                         other_distance_sq < my_distance_sq or
                         (
@@ -125,12 +122,13 @@ def decide_action(perception):
                         better_robot_found = True
                         break
 
-                if not better_robot_found:
-                    target_id = str(item['id'])
+                if not better_robot_found and current_target_id != '0':
+                    current_target_id = str(item['id'])
                     target_pos_x = item['x']
                     target_pos_z = item['z']
                     break
 
+    target_id = current_target_id
     # =============================
     # ACTIONS
     # =============================

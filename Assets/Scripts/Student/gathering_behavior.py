@@ -95,6 +95,8 @@ def decide_action(perception):
     health = perception['health']
     is_contagious = perception['is_contagious'] == 1
     infection_stage = perception['infection_stage']
+    my_spawn_x = perception['spawn_x']
+    my_spawn_z = perception['spawn_z']
     
     # Initialiser l'état de l'agent si nécessaire
     if my_id not in agent_states:
@@ -107,7 +109,9 @@ def decide_action(perception):
         }
     
     state = agent_states[my_id]
-    
+    #state['target_x'] = my_spawn_x
+    #state['target_z'] = my_spawn_z
+
     # === PRIORITÉ 1: Agents malades avec santé basse cherchent quarantaine ===
     if SICK_SEEK_QUARANTINE and is_contagious and health < QUARANTINE_HEALTH_THRESHOLD:
         return build_response(my_x, my_z, "stop", "quarantine")

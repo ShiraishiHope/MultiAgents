@@ -207,6 +207,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
       objectReference: {fileID: 0}
@@ -463,6 +467,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
       objectReference: {fileID: 0}
@@ -612,7 +620,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -1261,6 +1269,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
       objectReference: {fileID: 0}
@@ -1581,6 +1593,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
@@ -1946,6 +1962,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
       objectReference: {fileID: 0}
@@ -2136,6 +2156,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
@@ -3209,6 +3233,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
       objectReference: {fileID: 0}
@@ -3292,6 +3320,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
@@ -5034,6 +5066,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1924876601}
     m_Modifications:
+    - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
+      propertyPath: decisionInterval
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
       value: robot
