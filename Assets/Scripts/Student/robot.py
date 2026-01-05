@@ -39,7 +39,6 @@ def decide_action(perception):
     delivery_zones = perception.get('deposites', [])
     all_robots = perception.get('all_agents', {})
     obstacles = perception.get('obstacles', [])
-
     current_target_id = str(perception.get('current_target_id', "0"))
 
     target_id = "0"
@@ -163,10 +162,32 @@ def decide_action(perception):
         dz = robot_z - obstacle['z']
         distance = math.hypot(dx, dz)
 
-        if 0 < distance < 2.5:
-            strength = (2.5 - distance) / 2.5
-            avoidance_x += (dx / distance) * strength * 2.5
-            avoidance_z += (dz / distance) * strength * 2.5
+        if 0 < distance < 1.5:
+            strength = (1.5 - distance) / 1.5
+            avoidance_x += (dx / distance) * strength * 1.5
+            avoidance_z += (dz / distance) * strength * 1.5
+
+    # =============================
+    # ÉVITEMENT AGENTS
+    # =============================
+    # On boucle sur les valeurs (les données de chaque robot)
+    for other_id, other_data in all_robots.items():
+        
+        # SÉCURITÉ : On n'évite pas soi-même !
+        if str(other_id) == robot_id:
+            continue
+            
+        dx = robot_x - other_data.get('x', 0.0)
+        dz = robot_z - other_data.get('z', 0.0)
+        distance = math.hypot(dx, dz)
+
+        # Si un autre robot est trop proche (rayon de 1.5 unité)
+        if 0 < distance < 1.5:
+            # Plus ils sont proches, plus la force est grande
+            strength = (1.5 - distance) / 1.5
+            # Normalisation du vecteur (dx/distance) et application de la force
+            avoidance_x += (dx / distance) * strength * 2.0 
+            avoidance_z += (dz / distance) * strength * 2.0
 
     return {
         "movement": {

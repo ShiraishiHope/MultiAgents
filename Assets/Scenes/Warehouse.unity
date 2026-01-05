@@ -612,7 +612,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -2221,7 +2221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.05
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -5381,7 +5381,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.05
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName

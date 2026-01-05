@@ -151,10 +151,10 @@ def decide_action(perception):
         dz = robot_z - obstacle['z']
         distance = math.hypot(dx, dz)
 
-        if 0 < distance < 2.5:
-            strength = (2.5 - distance) / 2.5
-            avoidance_x += (dx / distance) * strength * 2.5
-            avoidance_z += (dz / distance) * strength * 2.5
+        if 0 < distance < 1.5:
+            strength = (1.5 - distance) / 1.5
+            avoidance_x += (dx / distance) * strength * 1.5
+            avoidance_z += (dz / distance) * strength * 1.5
 
     return {
         "movement": {
