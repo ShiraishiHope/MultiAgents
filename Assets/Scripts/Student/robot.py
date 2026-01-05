@@ -153,10 +153,6 @@ def decide_action(perception):
         action_type = "drop_off"
         movement_type = "stop"
 
-    # 🧊 ZONE MORTE (ANTI MICRO-OSCILLATION)
-    if distance_to_target < 0.3:
-        movement_type = "stop"
-
     # =============================
     # ÉVITEMENT OBSTACLES
     # =============================

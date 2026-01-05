@@ -637,7 +637,7 @@ public class PythonBehaviorController : MonoBehaviour
             }
             perception[GetCachedKey("items")] = itemList;
         }
-         
+          
         // ----- DEPOSITS (for robots) -----
         using (PyList depositList = new PyList())
         {

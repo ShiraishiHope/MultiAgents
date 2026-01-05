@@ -119,8 +119,8 @@ def decide_action(perception):
                     break
         else :
             target_id = current_target_id
-            target_pos_x = visible_items[f'{current_target_id}'].get('x')
-            target_pos_z = visible_items[f'{current_target_id}'].get('z')
+            target_pos_x = item[current_target_id].get('x')
+            target_pos_z = item[current_target_id].get('z')
 
     # =============================
     # ACTIONS
