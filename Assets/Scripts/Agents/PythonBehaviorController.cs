@@ -632,7 +632,7 @@ public class PythonBehaviorController : MonoBehaviour
                     SetFloat(itemData, "x", item.Position.x);
                     SetFloat(itemData, "z", item.Position.z);
                     SetString(itemData, "id", item.InstanceID);
-                    itemList.Append(itemData);
+                    itemList.Append(itemData); 
                 }
             }
             perception[GetCachedKey("items")] = itemList;
