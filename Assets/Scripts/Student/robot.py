@@ -113,7 +113,7 @@ def decide_action(perception):
                         break
 
                 if not better_robot_found:
-                    target_id = str(item['id'])
+                    target_id = str(item['id']) 
                     target_pos_x = item['x']
                     target_pos_z = item['z']
                     break
