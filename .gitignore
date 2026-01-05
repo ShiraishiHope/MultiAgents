@@ -99,5 +99,4 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
 #cache
-C:\Users\phdor\Documents\lightsout\m2_fyc\MultiAgents\Assets\Scripts\Student\__pycache__
 ./Assets/Scripts/Student/__pycache__/*
