@@ -224,7 +224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -500,7 +500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -668,7 +668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -1334,7 +1334,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -1675,7 +1675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -2059,7 +2059,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -2270,7 +2270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -2369,7 +2369,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -3283,6 +3283,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1071851790}
     m_Modifications:
+    - target: {fileID: 3910275156536773542, guid: 215fceb8eccbc54409e145f16c2b0f8c, type: 3}
+      propertyPath: checkInterval
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5302460102440889157, guid: de4ad9755eec954419b90cef170ea41f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.440001
@@ -3331,10 +3335,6 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Shelves
       objectReference: {fileID: 0}
-    - target: {fileID: 3910275156536773542, guid: 215fceb8eccbc54409e145f16c2b0f8c, type: 3}
-      propertyPath: checkInterval
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3374,7 +3374,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -3478,7 +3478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -5240,7 +5240,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName
@@ -5605,7 +5605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: decisionInterval
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2039006579102794322, guid: ffefab69ce588e44095c35d59d3b476b, type: 3}
       propertyPath: pythonScriptName

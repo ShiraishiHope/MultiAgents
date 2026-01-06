@@ -57,23 +57,6 @@ def decide_action(perception):
     target_pos_z = spawn_z
 
     # =============================
-    # 1. ANALYSE DES RÉSERVATIONS
-    # =============================
-    # On liste les IDs des items déjà ciblés par les autres robots
-    reserved_items = {
-        str(robot_data.get('current_target_id'))
-        for other_robot_id, robot_data in all_robots.items()
-        if str(other_robot_id) != robot_id
-        and str(robot_data.get('current_target_id', "0")) != "0"
-    }
-
-    # On crée la liste des items disponibles (ceux qui ne sont pas réservés)
-    available_items = [
-        item for item in visible_items 
-        if str(item['id']) not in reserved_items
-    ]
-
-    # =============================
     # MODE : JE TRANSPORTE → DÉPÔT
     # =============================
     if carrying_item and delivery_zones:
@@ -88,64 +71,80 @@ def decide_action(perception):
     # MODE : JE CHERCHE UN ITEM
     # =============================
     elif not carrying_item:
-        if current_target_id != "0":
+        if current_target_id != "0" and current_target_id in visible_items_by_id:
             item = visible_items_by_id[current_target_id]
             dist = math.hypot(item['x'] - robot_x, item['z'] - robot_z)
             target_id = current_target_id
             target_pos_x = item['x']
             target_pos_z = item['z']
-        
-        # 2️ SÉLECTION POLIE D'UNE NOUVELLE CIBLE
-        available_other_robots_without_target = {
-            other_robot_id: other_robot_data
-            for other_robot_id, other_robot_data in all_robots.items()
-            if other_robot_id != robot_id
-            and other_robot_data.get('current_target_id', '0') == '0'
-            and not other_robot_data.get('is_carrying')
-        }
+        else:
+            # 2️ SÉLECTION POLIE D'UNE NOUVELLE CIBLE
+            available_other_robots_without_target = {
+                other_robot_id: other_robot_data
+                for other_robot_id, other_robot_data in all_robots.items()
+                if other_robot_id != robot_id
+                and other_robot_data.get('current_target_id', '0') == '0'
+                and not other_robot_data.get('is_carrying')
+            }
+            # On liste les IDs des items déjà ciblés par les autres robots
+            reserved_items = {
+                str(robot_data.get('current_target_id'))
+                for other_robot_id, robot_data in all_robots.items()
+                if str(other_robot_id) != robot_id
+                and str(robot_data.get('current_target_id', "0")) != "0"
+            }
+
+            # On crée la liste des items disponibles (ceux qui ne sont pas réservés)
+            available_items = [
+                item for item in visible_items 
+                if str(item['id']) not in reserved_items
+            ]
+
+            available_items.sort(
+                key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
+            )
             
-        available_items.sort(
-            key=lambda item: (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
-        )
-            
-        for item in available_items:
-            my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
-                
-            # Trouver le robot le plus proche de cet item (parmi ceux disponibles)
-            closest_robot_id = robot_id
-            closest_distance_sq = my_distance_sq
-                
-            for other_robot_id, other_robot in available_other_robots_without_target.items():
-                other_distance_sq = (
-                    (item['x'] - other_robot.get('x')) ** 2 +
-                    (item['z'] - other_robot.get('z')) ** 2
-                )
+            for item in available_items:
+                my_distance_sq = (item['x'] - robot_x) ** 2 + (item['z'] - robot_z) ** 2
                     
-                # 1. Calcul de la différence de distance
-                is_significantly_closer = other_distance_sq < closest_distance_sq
+                # Trouver le robot le plus proche de cet item (parmi ceux disponibles)
+                closest_robot_id = str(robot_id)
+                closest_distance_sq = my_distance_sq
+                for other_robot_id, other_robot in available_other_robots_without_target.items():
+                    other_distance_sq = (
+                        (item['x'] - other_robot.get('x')) ** 2 +
+                        (item['z'] - other_robot.get('z')) ** 2
+                    )
+                        
+                    # 1. Calcul de la différence de distance
+                    is_significantly_closer = other_distance_sq < closest_distance_sq
 
-                # 2. Vérification de l'égalité (tolérance aux erreurs de flottants)
-                is_effectively_equal = math.isclose(
-                    other_distance_sq, 
-                    closest_distance_sq, 
-                    rel_tol=0.1
-                )
-            
-                # 3. Comparaison des IDs en cas d'égalité (Priorité sociale)
-                has_priority_id = str(other_robot_id) < closest_robot_id
-                UnityEngine.Debug.Log(f'{other_robot_id}{closest_robot_id}')
-
-                # 4. Application de la décision
-                if is_significantly_closer or (is_effectively_equal and has_priority_id):
-                    closest_robot_id = str(other_robot_id)
-                    closest_distance_sq = other_distance_sq
+                    # 2. Vérification de l'égalité (tolérance aux erreurs de flottants)
+                    is_effectively_equal = math.isclose(
+                        other_distance_sq, 
+                        closest_distance_sq, 
+                        rel_tol=0.01
+                    )
                 
-            # Si je suis le robot le plus proche (avec l'ID le plus bas en cas d'égalité)
-            if closest_robot_id == robot_id:
-                target_id = str(item['id'])
-                target_pos_x = item['x']
-                target_pos_z = item['z']
-                break
+                    # 3. Comparaison des IDs en cas d'égalité (Priorité sociale)
+                    has_priority_id = str(other_robot_id) < closest_robot_id
+                    UnityEngine.Debug.Log(f'{other_robot_id}{closest_robot_id}')
+
+                    # 4. Application de la décision
+                    if is_significantly_closer or (is_effectively_equal and has_priority_id):
+                        closest_robot_id = str(other_robot_id)
+                        closest_distance_sq = other_distance_sq
+                    
+                # Si je suis le robot le plus proche (avec l'ID le plus bas en cas d'égalité)
+                if closest_robot_id == robot_id:
+                    target_id = str(item['id'])
+                    target_pos_x = item['x']
+                    target_pos_z = item['z']
+                    break
+                else:
+                # On vérifie si l'ID existe pour éviter une erreur, puis on le supprime
+                    if closest_robot_id in available_other_robots_without_target:
+                        del available_other_robots_without_target[closest_robot_id]
 
     # =============================
     # ACTIONS
@@ -198,12 +197,12 @@ def decide_action(perception):
         distance = math.hypot(dx, dz)
 
         # Si un autre robot est trop proche (rayon de 1.5 unité)
-        if 0 < distance < 1.5:
+        if 0 < distance < 0.5:
             # Plus ils sont proches, plus la force est grande
-            strength = (1.5 - distance) / 1.5
+            strength = (0.5 - distance) / 1
             # Normalisation du vecteur (dx/distance) et application de la force
-            avoidance_x += (dx / distance) * strength * 2.0 
-            avoidance_z += (dz / distance) * strength * 2.0
+            avoidance_x += (dx / distance) * strength * 2
+            avoidance_z += (dz / distance) * strength * 2
 
     return {
         "movement": {
