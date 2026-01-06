@@ -544,7 +544,7 @@ public class ActionController : MonoBehaviour
         float distance = Vector3.Distance(transform.position, item.Position);
         if (distance > PICKUP_RANGE)
         {
-            lastActionResult.failReason = $"Item out of range ({distance:F1} > {EAT_RANGE})";
+            lastActionResult.failReason = $"Item out of range ({distance:F1} > {PICKUP_RANGE})";
             return lastActionResult;
         }
 
@@ -562,7 +562,7 @@ public class ActionController : MonoBehaviour
         item.transform.SetParent(this.transform);
         item.transform.localPosition = new Vector3(0, 0.5f, 0); // Positionné sur le dessus
 
-        baseAgent.SetIsCarrying(true);
+        baseAgent.SetIsCarrying(true,item.InstanceID);
         baseAgent.SetCurrentAction("pick_up");
         lastActionResult.success = true;
 
@@ -593,7 +593,7 @@ public class ActionController : MonoBehaviour
         carriedItem.CompleteDelivery();
 
         baseAgent.SetCurrentAction("drop_off");
-        baseAgent.SetIsCarrying(false);
+        baseAgent.SetIsCarrying(false,"0");
         lastActionResult.success = true;
 
         Debug.Log($"{baseAgent.InstanceID} dropped off an item");

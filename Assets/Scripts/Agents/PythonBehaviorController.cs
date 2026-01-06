@@ -436,8 +436,8 @@ public class PythonBehaviorController : MonoBehaviour
 
                 using (PyFloat x = new PyFloat(pos.x))
                 using (PyFloat z = new PyFloat(pos.z))
-                using (PyString targetId = new PyString(controller.currentTargetID ?? "0"))
-                using (PyInt isCarrying = new PyInt(controller.HasItemAttached() ? 1 : 0))
+                using (PyString targetId = new PyString(controller.actionManager.GetPerceptionData().targetId ?? "0"))
+                using (PyInt isCarrying = new PyInt(controller.actionManager.GetPerceptionData().isCarrying ? 1 : 0))
                 {
                     posDict[GetCachedKey("x")] = x;
                     posDict[GetCachedKey("z")] = z;
@@ -616,7 +616,7 @@ public class PythonBehaviorController : MonoBehaviour
         SetInt(perception, "is_carrying", data.isCarrying ? 1 : 0);
 
         // Current target (for reservation system)
-        SetString(perception, "current_target_id", currentTargetID);
+        SetString(perception, "current_target_id", data.targetId);
 
         // ----- ITEMS (for robots) -----
         using (PyList itemList = new PyList())
@@ -912,48 +912,4 @@ public class PythonBehaviorController : MonoBehaviour
     public bool IsBatchMaster => batchMaster == this;
     #endregion
 
-    #region Robot Item Handling
-
-    /// <summary>
-    /// Checks if this robot has an item attached as a child object.
-    /// </summary>
-    private bool HasItemAttached()
-    {
-        return GetAttachedItem() != null;
-    }
-
-    /// <summary>
-    /// Gets the Transform of the item being carried (if any).
-    /// </summary>
-    private Transform GetAttachedItem()
-    {
-        foreach (Transform child in transform)
-        {
-            if (child.GetComponent<Item>() != null) return child;
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Finds the nearest GameObject with a specific tag within radius.
-    /// </summary>
-    private GameObject FindNearestWithTag(string tag, float radius)
-    {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("Item");
-        GameObject nearest = null;
-        float minDist = radius;
-
-        foreach (GameObject obj in objects)
-        {
-            float dist = Vector3.Distance(this.transform.position, obj.transform.position);
-            if (dist < minDist)
-            {
-                nearest = obj;
-                minDist = dist;
-            }
-        }
-        return nearest;
-    }
-
-    #endregion
 }

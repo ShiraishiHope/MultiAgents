@@ -89,6 +89,7 @@ public class AgentActionManager : MonoBehaviour
 
         //Robot
         public bool isCarrying;
+        public string targetId;
 
     }
 
@@ -236,6 +237,7 @@ public class AgentActionManager : MonoBehaviour
             infectionStage = (int)baseAgent.CurrentInfectionStage,
             infectivity = baseAgent.Infectivity,
             isCarrying = baseAgent.IsCarrying,
+            targetId = baseAgent.TargetId,
             // Disease Timing
             incubationPeriod = baseAgent.IncubationPeriod,
             contagiousDuration = baseAgent.ContagiousDuration,
