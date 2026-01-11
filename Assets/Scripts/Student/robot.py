@@ -40,7 +40,7 @@ def decide_action(perception):
     all_robots = perception.get('all_agents', {})
     obstacles = perception.get('obstacles', [])
 
-    current_target_id = str(perception.get('current_target_id', "0"))
+    current_target_id = str(perception.get('current_target_id'))
 
     target_id = "0"
     target_pos_x = spawn_x
@@ -162,9 +162,10 @@ def decide_action(perception):
         dz = robot_z - obstacle['z']
         distance = math.hypot(dx, dz)
         if 0 < distance < 2.5:
-            strength = (2.5 - distance) / 2.5
-            avoidance_x += (dx / distance) * strength * 2.5
-            avoidance_z += (dz / distance) * strength * 2.5
+            strength = (3 - distance) / 2
+            avoidance_x += (dx / distance) * strength * 2
+            avoidance_z += (dz / distance) * strength * 2
+            movement_type = "break"
 
     # =============================
     # ÉVITEMENT AGENTS
@@ -175,10 +176,11 @@ def decide_action(perception):
         dx = robot_x - other_data.get('x', 0.0)
         dz = robot_z - other_data.get('z', 0.0)
         distance = math.hypot(dx, dz)
-        if 0 < distance < 1.5:
-            strength = (1.5 - distance)
-            avoidance_x += (dx / distance) * strength * 2
-            avoidance_z += (dz / distance) * strength * 2
+        if 0 < distance < 1:
+            strength = (1 - distance)
+            avoidance_x += (dx / distance) * strength * 1
+            avoidance_z += (dz / distance) * strength * 1
+            movement_type = "break"
 
     return {
         "movement": {

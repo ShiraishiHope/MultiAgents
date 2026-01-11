@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67147f95421f95478d3cf5ff9f55589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonBehaviorController
-  pythonScriptName: robot tp
+  pythonScriptName: robot
   decisionInterval: 0.5
 --- !u!114 &7525930326550077079
 MonoBehaviour:
@@ -343,7 +343,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a23a9753e7509641981aadb36b5eef9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.9
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7a23a9753e7509641981aadb36b5eef9, type: 3}
       propertyPath: m_LocalPosition.z
