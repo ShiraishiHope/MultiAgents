@@ -13,6 +13,7 @@ public class MovementController : MonoBehaviour
     [Header("Movement Speeds")]
     [SerializeField] private float walkSpeed = 3f;      // Normal walking speed
     [SerializeField] private float runSpeed = 5f;       // Running/sprinting speed
+    [SerializeField] private float breakSpeed = 2f;
     [SerializeField] private float stoppingDistance = 0.1f;  // How close to target before stopping
 
     // Avoid action fixed distance
@@ -104,6 +105,17 @@ public class MovementController : MonoBehaviour
 
     #region Basic Movement Commands
     // Tell the agent to walk to a specific position
+
+    public void BreakTo(Vector3 position)
+    {
+        targetPosition = position;
+        currentSpeed = breakSpeed;
+        isMoving = true;
+
+        baseAgent.ChangeState(BaseAgent.AgentState.Walking);
+        baseAgent.SetCurrentAction("break");
+    }
+
     public void WalkTo(Vector3 position)
     {
         //handle dead agents

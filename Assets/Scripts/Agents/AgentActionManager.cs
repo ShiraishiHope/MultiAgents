@@ -252,7 +252,7 @@ public class AgentActionManager : MonoBehaviour
     }
 
     // ===== Movement Wrappers =====
-
+    public void BreakTo(Vector3 position) => Movement.BreakTo(position);
     public void MoveTo(Vector3 position) => Movement.WalkTo(position);
     public void RunTo(Vector3 position) => Movement.RunTo(position);
     public void Stop() => Movement.StopMoving();
@@ -284,6 +284,8 @@ public class AgentActionManager : MonoBehaviour
     public ActionController.ActionResult PickUp(string itemID) => Action.PickUp(itemID);
 
     public ActionController.ActionResult DropOff() => Action.DropOff();
+
+    public ActionController.ActionResult SetTargetId(string targetId) => Action.SetTargetId(targetId);
 
     // ===== Query Properties =====
 

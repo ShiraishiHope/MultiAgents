@@ -686,6 +686,7 @@ public class PythonBehaviorController : MonoBehaviour
         {
             string agentID = kvp.Key;
             PythonBehaviorController controller = kvp.Value;
+            AgentActionManager actionManager = controller.actionManager;
 
             if (controller == null || controller.actionManager == null) continue;
 
@@ -702,7 +703,8 @@ public class PythonBehaviorController : MonoBehaviour
                     Debug.Log($"[Agent {agentID}] Action: {decision.action.actionType} | Move: {decision.movement.movementType} | Target: {decision.action.targetID}");
 
                     controller.currentTargetID = decision.action.targetID ?? "0";
-                    ExecuteDecision(controller.actionManager, decision);
+                    if(controller.baseAgent.Type == BaseAgent.CharacterType.Robot) { actionManager.SetTargetId(controller.currentTargetID); }
+                    ExecuteDecision(actionManager, decision);
                 }
             }
         }
@@ -799,6 +801,9 @@ public class PythonBehaviorController : MonoBehaviour
 
         switch (movement.movementType)
         {
+            case "break":
+                actionManager.BreakTo(targetPosition); 
+                break;
             case "walk":
                 actionManager.MoveTo(targetPosition);
                 break;

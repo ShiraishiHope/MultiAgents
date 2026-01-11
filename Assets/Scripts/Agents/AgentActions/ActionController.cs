@@ -562,7 +562,7 @@ public class ActionController : MonoBehaviour
         item.transform.SetParent(this.transform);
         item.transform.localPosition = new Vector3(0, 0.5f, 0); // Positionné sur le dessus
 
-        baseAgent.SetIsCarrying(true,item.InstanceID);
+        baseAgent.SetIsCarrying(true);
         baseAgent.SetCurrentAction("pick_up");
         lastActionResult.success = true;
 
@@ -593,10 +593,23 @@ public class ActionController : MonoBehaviour
         carriedItem.CompleteDelivery();
 
         baseAgent.SetCurrentAction("drop_off");
-        baseAgent.SetIsCarrying(false,"0");
+        baseAgent.SetIsCarrying(false);
         lastActionResult.success = true;
 
         Debug.Log($"{baseAgent.InstanceID} dropped off an item");
+        return lastActionResult;
+    }
+
+    /// <summary>
+    /// MAJ de la target du robot
+    /// </summary>
+    public ActionResult SetTargetId(string targetId)
+    {
+        lastActionResult = new ActionResult();
+
+        baseAgent.SetTargetId(targetId);
+        lastActionResult.success = true;
+
         return lastActionResult;
     }
 

@@ -289,9 +289,17 @@ public class BaseAgent : MonoBehaviour
     /// Met à jour l'état de transport de l'agent (si le robot porte un objet).
     /// </summary>
     /// <param name="carrying">True si l'agent porte un objet, false sinon.</param>
-    public void SetIsCarrying(bool carrying , string newTargetId)
+    public void SetIsCarrying(bool carrying)
     {
         isCarrying = carrying;
+    }
+
+    /// <summary>
+    /// Met à jour la target Id
+    /// </summary>
+    /// <param name="newTargetId"></param>
+    public void SetTargetId(string newTargetId)
+    {
         targetId = newTargetId;
     }
 
